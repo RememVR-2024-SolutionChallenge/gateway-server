@@ -10,7 +10,7 @@ export class UserController {
 
   @ApiOperation({
     summary:
-      '가입(구글 인증 후, DB에 없는 이메일인 경우에는 최초 회원가입 필요)',
+      '가입(구글 OAuth2.0 인증 후[1], DB에 해당 유저 존재 확인 후[2], 존재하지 않는 경우[3], 최초 회원가입 필요[4])',
   })
   @Post()
   join(@Body() joinRequestDto: JoinRequestDto) {
