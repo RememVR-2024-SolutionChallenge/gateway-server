@@ -41,16 +41,17 @@ export class AuthService {
     }
   }
 
-  async generateRefreshToken(id: String) {
+  async generateRefreshToken(id: String): Promise<String> {
     const refreshToken = await this.jwtService.signAsync(
       { id },
       { expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRE },
     );
+    await this.userRepository.updateRefreshToken(id, refreshToken);
 
-    return await this.userRepository.updateRefreshToken(id, refreshToken);
+    return refreshToken;
   }
 
-  async generateAccessToken(id: String) {
+  async generateAccessToken(id: String): Promise<String> {
     return await this.jwtService.signAsync(
       { id },
       { expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRE },
