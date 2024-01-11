@@ -8,8 +8,9 @@ import {
   Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { GoogleAuthResponseDto } from './dto/response/google-auth.response.dto';
 
 @ApiTags('AUTH')
 @Controller('auth')
@@ -28,8 +29,12 @@ export class AuthController {
 
   @ApiOperation({
     summary: '구글 OAuth2.0 인증',
+    description: '프론트에 응답을 보내는 엔드포인트입니다.',
+  })
+  @ApiResponse({
     description:
-      '서버 내부적으로 사용하는 API입니다. 프론트단에서는 접근하지 마세요.',
+      '에러의 경우는 401에러, 최초가입자는 200번 응답이지만 토큰에 null',
+    type: GoogleAuthResponseDto,
   })
   @UseGuards(AuthGuard('google'))
   @Get('google/callback')
