@@ -1,5 +1,7 @@
 # Set up
-FROM node:16-alpine3.16
+FROM node:18-alpine3.16
+
+# Timezone
 ENV TZ=Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -7,10 +9,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
-
-# typeorm-cli
-RUN npm i -g typeorm-cli
-RUN npm i -g pm2
 
 # Build
 COPY . .
