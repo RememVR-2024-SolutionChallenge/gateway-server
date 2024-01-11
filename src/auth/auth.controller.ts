@@ -33,7 +33,7 @@ export class AuthController {
   })
   @ApiResponse({
     description:
-      '에러의 경우는 401에러, 최초가입자는 200번 응답이지만 토큰에 null',
+      '최초가입자와 기가입자는 isEnrolled 필드로 구분할 수 있습니다.',
     type: GoogleAuthResponseDto,
   })
   @UseGuards(AuthGuard('google'))

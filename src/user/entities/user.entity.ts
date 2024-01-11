@@ -22,12 +22,16 @@ export class User {
   @Column()
   email: String;
 
-  @ApiProperty({ description: '역할(보호자, 피보호자)' })
+  @ApiProperty({ description: '이름, 닉네임(displayName)' })
   @Column()
+  name: String;
+
+  @ApiProperty({ description: '역할(보호자, 피보호자)' })
+  @Column({ nullable: true })
   role: 'CareGiver' | 'CareRecipient';
 
   @ApiProperty({ description: '리프레시 토큰' })
-  @Column()
+  @Column({ nullable: true })
   refreshToken: String;
 
   @ApiProperty({ description: '생성일' })
@@ -38,7 +42,7 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ApiProperty({ example: null, description: '삭제일' })
+  @ApiProperty({ description: '삭제일' })
   @DeleteDateColumn()
   deletedAt: Date | null;
 }

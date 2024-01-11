@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/user/entities/user.entity';
 import { UserRepository } from 'src/user/user.repository';
 
 @Injectable()
@@ -15,14 +16,28 @@ export class AuthService {
 
     const { user } = req;
     if (await this.userRepository.findById(user.id)) {
-      // accessToken, refreshToken 부여
+      // 기가입자인 경우
+      // 바로 access, refresh Token 부여
       return {
         accessToken: this.generateAccessToken(user.id),
         refreshToken: this.generateRefreshToken(user.id),
+        isEnrolled: true,
       };
     } else {
-      // 최초가입자임을 client에 알리기
-      return { accessToken: null, refreshToken: null };
+      // 최초가입자인 경우
+      // 기본 데이터 저장 후,
+      const newUser = new User();
+      newUser.id = user.id;
+      newUser.email = user.email;
+      newUser.name = user.name;
+      newUser.role = null;
+      await this.userRepository.save(newUser);
+      // access, refresh Token 생성 및 isEnrolled에 false 처리 후 부여
+      return {
+        accessToken: this.generateAccessToken(user.id),
+        refreshToken: this.generateRefreshToken(user.id),
+        isEnrolled: false,
+      };
     }
   }
 
