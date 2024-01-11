@@ -9,10 +9,7 @@ async function bootstrap() {
   // Swagger
   const document_config = new DocumentBuilder()
     .setTitle('Remember Me Application Server')
-    .setDescription(
-      `혹시라도 스웨거 문서가 정확하지 않을 수 있으니 한번 실행 부탁드립니다 :(
-        에러가 생기는 경우에 연락주세요.`,
-    )
+    .setDescription(`에러가 생기는 경우에 연락주세요.`)
     .setVersion('1.0.0')
     .addBearerAuth()
     .build();
@@ -21,6 +18,9 @@ async function bootstrap() {
 
   // Class Validator
   app.useGlobalPipes(new ValidationPipe());
+
+  // Cors
+  app.enableCors();
 
   await app.listen(3000);
 }

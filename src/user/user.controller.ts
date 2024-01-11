@@ -9,8 +9,9 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({
-    summary:
-      '가입(구글 OAuth2.0 인증 후[1], DB에 해당 유저 존재 확인 후[2], 존재하지 않는 경우[3], 최초 회원가입 필요[4])',
+    summary: '최초 회원 가입',
+    description:
+      '(구글 OAuth2.0 인증 후[1], DB에 해당 유저 존재 확인 후[2], 존재하지 않는 경우에[3], 최초 회원가입 필요[4])',
   })
   @Post()
   join(@Body() joinRequestDto: JoinRequestDto) {
