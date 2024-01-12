@@ -26,7 +26,7 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @Get('google')
   // (1) redirect google login page
-  async googleAuth() {}
+  async googleAuth(): Promise<void> {}
 
   @ApiOperation({
     summary: '구글 OAuth2.0 인증',

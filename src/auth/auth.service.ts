@@ -4,6 +4,8 @@ import { User } from 'src/user/entities/user.entity';
 import { UserRepository } from 'src/user/user.repository';
 import { RefreshTokenRequestDto } from './dto/request/refresh-token.request.dto';
 import { RefreshTokenResponseDto } from './dto/response/refresh-token.response.dto';
+import { GoogleAuthResponseDto } from './dto/response/google-auth.response.dto';
+import { GoogleAuthProfileType } from './type/google-auth-profile.type';
 
 @Injectable()
 export class AuthService {
@@ -12,11 +14,11 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async googleAuthCallback(req) {
+  async googleAuthCallback(req): Promise<GoogleAuthResponseDto> {
     if (!req.user)
       throw new UnauthorizedException('인증되지 않은 사용자입니다.');
 
-    const { user } = req;
+    const user: GoogleAuthProfileType = req.user;
     if (await this.userRepository.findById(user.id)) {
       // 기가입자인 경우
       // 바로 access, refresh Token 부여
