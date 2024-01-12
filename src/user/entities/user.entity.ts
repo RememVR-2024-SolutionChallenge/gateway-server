@@ -30,6 +30,10 @@ export class User {
   @Column({ nullable: true })
   role: 'CareGiver' | 'CareRecipient';
 
+  @ApiProperty({ description: '최초 정보 등록 여부' })
+  @Column({ default: false })
+  isEnrolled: boolean;
+
   @ApiProperty({ description: '리프레시 토큰' })
   @Column({ nullable: true })
   refreshToken: string;
