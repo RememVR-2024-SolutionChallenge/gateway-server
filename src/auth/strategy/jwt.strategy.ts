@@ -22,8 +22,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
     if (exp < Date.now()) {
       throw new UnauthorizedException({
+        statusCode: 401,
         message: '만료된 JWT 토큰입니다.',
-        error: 'expired',
+        error: 'Expired',
       });
     }
 
