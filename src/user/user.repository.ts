@@ -11,13 +11,13 @@ export class UserRepository extends Repository<User> {
     super(repository.target, repository.manager);
   }
 
-  async findById(id: String): Promise<User> {
+  async findById(id: string): Promise<User> {
     return this.repository.findOneBy({ id });
   }
 
   async updateRefreshToken(
-    userId: String,
-    refreshToken: String,
+    userId: string,
+    refreshToken: string,
   ): Promise<void> {
     const user = await this.repository.findOneBy({ id: userId });
     user.refreshToken = refreshToken;
