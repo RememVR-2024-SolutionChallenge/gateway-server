@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { GoogleAuthResponseDto } from './dto/response/google-auth.response.dto';
+import { GoogleAuthGuard } from './guard/google-auth.guard';
 
 @ApiTags('AUTH')
 @Controller('auth')
@@ -21,11 +22,10 @@ export class AuthController {
     summary: '구글 OAuth2.0 인증',
     description: '프론트에서는 이 api에 접근해야 합니다.',
   })
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   @Get('google')
-  async googleAuth() {
-    // (1) redirect google login page
-  }
+  // (1) redirect google login page
+  async googleAuth() {}
 
   @ApiOperation({
     summary: '구글 OAuth2.0 인증',
@@ -36,10 +36,12 @@ export class AuthController {
       '최초가입자와 기가입자는 isEnrolled 필드로 구분할 수 있습니다.',
     type: GoogleAuthResponseDto,
   })
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
+  // (2) get user info from google
   async googleAuthCallback(@Req() req: Request) {
-    // (2) get user info from google
+    // 기가입자, 최초가입자 구분 후
+    // access 및 refresh token 부여
     return this.authService.googleAuthCallback(req);
   }
 }
