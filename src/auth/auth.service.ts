@@ -22,7 +22,7 @@ export class AuthService {
       // 바로 access, refresh Token 부여
       return {
         accessToken: await this.generateAccessToken(user.id),
-        refreshToken: await this.generateRefreshToken(user.id),
+        refreshToken: await this.updateRefreshToken(user.id),
         isEnrolled: true,
       };
     } else {
@@ -37,7 +37,7 @@ export class AuthService {
       // access, refresh Token 생성 및 isEnrolled에 false 처리 후 부여
       return {
         accessToken: await this.generateAccessToken(user.id),
-        refreshToken: await this.generateRefreshToken(user.id),
+        refreshToken: await this.updateRefreshToken(user.id),
         isEnrolled: false,
       };
     }
@@ -47,8 +47,6 @@ export class AuthService {
     dto: RefreshTokenRequestDto,
   ): Promise<RefreshTokenResponseDto> {
     const { refreshToken } = dto;
-
-    /*
     // Verify refresh token
     // JWT Refresh Token 검증 로직
     const decodedRefreshToken = this.jwtService.verify(refreshToken, {
@@ -57,22 +55,19 @@ export class AuthService {
 
     // Check if user exists
     const userId = decodedRefreshToken.id;
-    const user = await this.userService.getUserIfRefreshTokenMatches(
-      refreshToken,
-      userId,
-    );
-    if (!user) {
-      throw new UnauthorizedException('Invalid user!');
+    const user = await this.userRepository.findById(userId);
+
+    if (user.refreshToken != refreshToken) {
+      throw new UnauthorizedException('유효하지 않은 리프레시 토큰입니다.');
     }
 
     return {
       accessToken: await this.generateAccessToken(user.id),
-      refreshToken: await this.generateRefreshToken(user.id),
+      refreshToken: await this.updateRefreshToken(user.id),
     };
-    */
   }
 
-  async generateRefreshToken(id: string): Promise<string> {
+  async updateRefreshToken(id: string): Promise<string> {
     const refreshToken = await this.jwtService.signAsync(
       { id },
       { expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRE },
