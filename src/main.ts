@@ -17,7 +17,7 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   // Class Validator
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   // Cors
   app.enableCors();
