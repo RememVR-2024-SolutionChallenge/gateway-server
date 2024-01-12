@@ -1,7 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, ExtractJwt } from 'passport-jwt';
+import { Strategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserRepository } from 'src/user/user.repository';
+import { User } from '../../user/entities/user.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -13,21 +14,13 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: any): Promise<any> {
-    const { id, exp } = payload;
-    const user = this.userRepository.findById(id);
-
+  async validate(payload: any, done: VerifiedCallback): Promise<void> {
+    const { id } = payload;
+    const user: User = await this.userRepository.findById(id);
     if (!user) {
-      throw new UnauthorizedException('올바르지 않은 JWT 토큰입니다.');
-    }
-    if (exp < Date.now()) {
-      throw new UnauthorizedException({
-        statusCode: 401,
-        message: '만료된 JWT 토큰입니다.',
-        error: 'Expired',
-      });
+      throw new UnauthorizedException('올바르지 않은 인증정보입니다.');
     }
 
-    return user;
+    done(null, user);
   }
 }
