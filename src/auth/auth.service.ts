@@ -2,6 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/user/entities/user.entity';
 import { UserRepository } from 'src/user/user.repository';
+import { RefreshTokenRequestDto } from './dto/request/refresh-token.request.dto';
+import { RefreshTokenResponseDto } from './dto/response/refresh-token.response.dto';
 
 @Injectable()
 export class AuthService {
@@ -19,8 +21,8 @@ export class AuthService {
       // 기가입자인 경우
       // 바로 access, refresh Token 부여
       return {
-        accessToken: this.generateAccessToken(user.id),
-        refreshToken: this.generateRefreshToken(user.id),
+        accessToken: await this.generateAccessToken(user.id),
+        refreshToken: await this.generateRefreshToken(user.id),
         isEnrolled: true,
       };
     } else {
@@ -34,14 +36,43 @@ export class AuthService {
       await this.userRepository.save(newUser);
       // access, refresh Token 생성 및 isEnrolled에 false 처리 후 부여
       return {
-        accessToken: this.generateAccessToken(user.id),
-        refreshToken: this.generateRefreshToken(user.id),
+        accessToken: await this.generateAccessToken(user.id),
+        refreshToken: await this.generateRefreshToken(user.id),
         isEnrolled: false,
       };
     }
   }
 
-  async generateRefreshToken(id: String): Promise<String> {
+  async refreshAccessToken(
+    dto: RefreshTokenRequestDto,
+  ): Promise<RefreshTokenResponseDto> {
+    const { refreshToken } = dto;
+
+    /*
+    // Verify refresh token
+    // JWT Refresh Token 검증 로직
+    const decodedRefreshToken = this.jwtService.verify(refreshToken, {
+      secret: process.env.JWT_REFRESH_SECRET,
+    });
+
+    // Check if user exists
+    const userId = decodedRefreshToken.id;
+    const user = await this.userService.getUserIfRefreshTokenMatches(
+      refreshToken,
+      userId,
+    );
+    if (!user) {
+      throw new UnauthorizedException('Invalid user!');
+    }
+
+    return {
+      accessToken: await this.generateAccessToken(user.id),
+      refreshToken: await this.generateRefreshToken(user.id),
+    };
+    */
+  }
+
+  async generateRefreshToken(id: string): Promise<string> {
     const refreshToken = await this.jwtService.signAsync(
       { id },
       { expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRE },
@@ -51,7 +82,7 @@ export class AuthService {
     return refreshToken;
   }
 
-  async generateAccessToken(id: String): Promise<String> {
+  async generateAccessToken(id: string): Promise<string> {
     return await this.jwtService.signAsync(
       { id },
       { expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRE },
