@@ -1,8 +1,16 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { EnrollRequestDto } from './dto/request/enroll.request.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { User } from './entities/user.entity';
+import { AuthUser } from 'src/auth/decorator/auth-user.decorator';
 
 @ApiTags('USER')
 @Controller('user')
@@ -16,7 +24,11 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post()
-  enroll(@Body() enrollRequestDto: EnrollRequestDto): Promise<void> {
-    return this.userService.join(enrollRequestDto);
+  enroll(
+    @Body() enrollRequestDto: EnrollRequestDto,
+    @AuthUser() user: User,
+  ): Promise<void> {
+    enrollRequestDto.validateRole();
+    return this.userService.join(enrollRequestDto, user);
   }
 }
