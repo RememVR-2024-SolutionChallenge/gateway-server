@@ -2,6 +2,10 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/user/entities/user.entity';
 import { UserRepository } from 'src/user/user.repository';
+import { RefreshTokenRequestDto } from './dto/request/refresh-token.request.dto';
+import { RefreshTokenResponseDto } from './dto/response/refresh-token.response.dto';
+import { GoogleAuthResponseDto } from './dto/response/google-auth.response.dto';
+import { GoogleAuthProfileType } from './type/google-auth-profile.type';
 
 @Injectable()
 export class AuthService {
@@ -10,19 +14,19 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async googleAuthCallback(req) {
+  async googleAuthCallback(req): Promise<GoogleAuthResponseDto> {
     if (!req.user)
       throw new UnauthorizedException('인증되지 않은 사용자입니다.');
 
-    const { user } = req;
-    if (await this.userRepository.findById(user.id)) {
+    const user: GoogleAuthProfileType = req.user;
+    const accessToken = await this.generateAccessToken(user.id);
+    const refreshToken = await this.updateRefreshToken(user.id);
+
+    const exUser = await this.userRepository.findById(user.id);
+    if (exUser) {
       // 기가입자인 경우
-      // 바로 access, refresh Token 부여
-      return {
-        accessToken: this.generateAccessToken(user.id),
-        refreshToken: this.generateRefreshToken(user.id),
-        isEnrolled: true,
-      };
+      // 기가입자의 경우에도 최초 정보 등록은 안했을 수 있음.
+      return { accessToken, refreshToken, isEnrolled: exUser.isEnrolled };
     } else {
       // 최초가입자인 경우
       // 기본 데이터 저장 후,
@@ -33,15 +37,35 @@ export class AuthService {
       newUser.role = null;
       await this.userRepository.save(newUser);
       // access, refresh Token 생성 및 isEnrolled에 false 처리 후 부여
-      return {
-        accessToken: this.generateAccessToken(user.id),
-        refreshToken: this.generateRefreshToken(user.id),
-        isEnrolled: false,
-      };
+      return { accessToken, refreshToken, isEnrolled: false };
     }
   }
 
-  async generateRefreshToken(id: String): Promise<String> {
+  async refreshAccessToken(
+    dto: RefreshTokenRequestDto,
+  ): Promise<RefreshTokenResponseDto> {
+    const { refreshToken } = dto;
+    // Verify refresh token
+    // JWT Refresh Token 검증 로직
+    const decodedRefreshToken = this.jwtService.verify(refreshToken, {
+      secret: process.env.JWT_REFRESH_SECRET,
+    });
+
+    // Check if user exists
+    const userId = decodedRefreshToken.id;
+    const user = await this.userRepository.findById(userId);
+
+    if (user.refreshToken != refreshToken) {
+      throw new UnauthorizedException('유효하지 않은 리프레시 토큰입니다.');
+    }
+
+    return {
+      accessToken: await this.generateAccessToken(user.id),
+      refreshToken: await this.updateRefreshToken(user.id),
+    };
+  }
+
+  async updateRefreshToken(id: string): Promise<string> {
     const refreshToken = await this.jwtService.signAsync(
       { id },
       { expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRE },
@@ -51,7 +75,7 @@ export class AuthService {
     return refreshToken;
   }
 
-  async generateAccessToken(id: String): Promise<String> {
+  async generateAccessToken(id: string): Promise<string> {
     return await this.jwtService.signAsync(
       { id },
       { expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRE },

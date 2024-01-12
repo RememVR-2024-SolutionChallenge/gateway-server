@@ -16,23 +16,27 @@ import {
 export class User {
   @ApiProperty({ description: '유저 구분 아이디' })
   @PrimaryColumn()
-  id: String;
+  id: string;
 
   @ApiProperty({ description: '이메일(구글OAuth의 경우 지메일)' })
   @Column()
-  email: String;
+  email: string;
 
   @ApiProperty({ description: '이름, 닉네임(displayName)' })
   @Column()
-  name: String;
+  name: string;
 
   @ApiProperty({ description: '역할(보호자, 피보호자)' })
   @Column({ nullable: true })
   role: 'CareGiver' | 'CareRecipient';
 
+  @ApiProperty({ description: '최초 정보 등록 여부' })
+  @Column({ default: false })
+  isEnrolled: boolean;
+
   @ApiProperty({ description: '리프레시 토큰' })
   @Column({ nullable: true })
-  refreshToken: String;
+  refreshToken: string;
 
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn()

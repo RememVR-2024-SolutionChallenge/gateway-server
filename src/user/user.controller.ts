@@ -1,7 +1,16 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { UserService } from './user.service';
-import { JoinRequestDto } from './dto/request/join.request.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { EnrollRequestDto } from './dto/request/enroll.request.dto';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { User } from './entities/user.entity';
+import { AuthUser } from 'src/auth/decorator/auth-user.decorator';
 
 @ApiTags('USER')
 @Controller('user')
@@ -9,12 +18,17 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({
-    summary: '최초 회원 가입',
-    description:
-      '(구글 OAuth2.0 인증 후[1], DB에 해당 유저 존재 확인 후[2], 존재하지 않는 경우에[3], 최초 회원가입 필요[4])',
+    summary: '최초가입자 정보등록',
+    description: '구글 OAuth2.0 인증 후, 최초가입자로 확인되면, 정보등록 필요',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Post()
-  join(@Body() joinRequestDto: JoinRequestDto) {
-    return this.userService.join(joinRequestDto);
+  enroll(
+    @Body() enrollRequestDto: EnrollRequestDto,
+    @AuthUser() user: User,
+  ): Promise<void> {
+    enrollRequestDto.validateRole();
+    return this.userService.join(enrollRequestDto, user);
   }
 }
