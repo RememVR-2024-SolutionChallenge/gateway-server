@@ -15,6 +15,10 @@ export class UserRepository extends Repository<User> {
     return this.repository.findOneBy({ id });
   }
 
+  async findByEmail(email: string): Promise<User> {
+    return this.repository.findOneBy({ email });
+  }
+
   async updateRefreshToken(
     userId: string,
     refreshToken: string,

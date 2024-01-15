@@ -11,6 +11,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { User } from './entity/user.entity';
 import { AuthUser } from 'src/auth/decorator/auth-user.decorator';
+import { EnrollCareRequestDto } from './dto/request/enroll-care.reuqest.dto';
 
 @ApiTags('USER')
 @Controller('user')
@@ -32,12 +33,29 @@ export class UserController {
     return this.userEnrollService.enrollInfo(enrollInfoRequestDto, user);
   }
 
+  @ApiOperation({
+    summary: '최초가입자 환자-보호자 등록(1)',
+    description: '인풋으로 피보호자의 이메일을 받아서 인증번호 발송',
+  })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('/enroll/care/email')
+  enrollCareEmail(
+    @Body() enrollCareRequestDto: EnrollCareRequestDto,
+    @AuthUser() user: User,
+  ) {
+    return this.userEnrollService.enrollCareEmail(enrollCareRequestDto, user);
+  }
+
   // @ApiOperation({
-  //   summary: '최초가입자 환자-보호자 등록',
-  //   description: '이메일 인증 후, 보호자-환자 연결',
+  //   summary: '최초가입자 환자-보호자 등록(2)',
+  //   description:
+  //     '인풋으로 인증번호 받고, 확인 후에 케어관계 등록할 수 있도록 함',
   // })
   // @ApiBearerAuth()
   // @UseGuards(JwtAuthGuard)
-  // @Post('/enroll/care')
-  // enrollCareRecipient(@Body() nvjk, @AuthUser() user: User) {}
+  // @Post('/enroll/care/certificate')
+  // enrollCareCert(@Body() nvjk, @AuthUser() user: User) {
+  //   return;
+  // }
 }
