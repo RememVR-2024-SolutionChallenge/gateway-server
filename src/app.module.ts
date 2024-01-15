@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { UserModule } from './user/user.module';
+import { UserModule } from './domain/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user/entity/user.entity';
-import { AuthModule } from './auth/auth.module';
+import { User } from './domain/user/entity/user.entity';
+import { AuthModule } from './domain/auth/auth.module';
 
 @Module({
   imports: [
