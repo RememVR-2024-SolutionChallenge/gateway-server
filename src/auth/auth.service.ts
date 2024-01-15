@@ -19,26 +19,25 @@ export class AuthService {
       throw new UnauthorizedException('인증되지 않은 사용자입니다.');
 
     const user: GoogleAuthProfileType = req.user;
-    const accessToken = await this.generateAccessToken(user.id);
-    const refreshToken = await this.updateRefreshToken(user.id);
-
     const exUser = await this.userRepository.findById(user.id);
-    if (exUser) {
-      // 기가입자인 경우
-      // 기가입자의 경우에도 최초 정보 등록은 안했을 수 있음.
-      return { accessToken, refreshToken, isEnrolled: exUser.isEnrolled };
-    } else {
-      // 최초가입자인 경우
-      // 기본 데이터 저장 후,
+
+    if (!exUser) {
+      // 최초가입자인 경우 기본 데이터 저장 후,
       const newUser = new User();
       newUser.id = user.id;
       newUser.email = user.email;
       newUser.name = user.name;
       newUser.role = null;
       await this.userRepository.save(newUser);
-      // access, refresh Token 생성 및 isEnrolled에 false 처리 후 부여
-      return { accessToken, refreshToken, isEnrolled: false };
     }
+
+    const accessToken = await this.generateAccessToken(user.id);
+    const refreshToken = await this.updateRefreshToken(user.id);
+    return {
+      accessToken,
+      refreshToken,
+      isEnrolled: exUser ? exUser.isEnrolled : false,
+    };
   }
 
   async refreshAccessToken(
@@ -70,6 +69,7 @@ export class AuthService {
       { id },
       { expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRE },
     );
+    console.log(refreshToken);
     await this.userRepository.updateRefreshToken(id, refreshToken);
 
     return refreshToken;

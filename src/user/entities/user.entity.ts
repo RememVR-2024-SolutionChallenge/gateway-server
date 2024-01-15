@@ -1,4 +1,3 @@
-import { StringLiteral } from '@babel/types';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
@@ -28,7 +27,7 @@ export class User {
 
   @ApiProperty({ description: '역할(보호자, 피보호자)' })
   @Column({ nullable: true })
-  role: 'CareGiver' | 'CareRecipient';
+  role: 'CareGiver' | 'CareRecipient' | null;
 
   @ApiProperty({ description: '최초 정보 등록 여부' })
   @Column({ default: false })
@@ -36,7 +35,7 @@ export class User {
 
   @ApiProperty({ description: '리프레시 토큰' })
   @Column({ nullable: true })
-  refreshToken: string;
+  refreshToken: string | null;
 
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn()
