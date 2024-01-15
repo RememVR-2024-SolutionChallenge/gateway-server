@@ -5,8 +5,8 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { EnrollRequestDto } from './dto/request/enroll.request.dto';
+import { UserEnrollService } from './user-enroll.service';
+import { EnrollInfoRequestDto } from './dto/request/enroll-info.request.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { User } from './entities/user.entity';
@@ -15,7 +15,7 @@ import { AuthUser } from 'src/auth/decorator/auth-user.decorator';
 @ApiTags('USER')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userEnrollService: UserEnrollService) {}
 
   @ApiOperation({
     summary: '최초가입자 정보등록',
@@ -24,11 +24,11 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post()
-  enroll(
-    @Body() enrollRequestDto: EnrollRequestDto,
+  enrollInfo(
+    @Body() enrollInfoRequestDto: EnrollInfoRequestDto,
     @AuthUser() user: User,
   ): Promise<void> {
-    enrollRequestDto.validateRole();
-    return this.userService.join(enrollRequestDto, user);
+    enrollInfoRequestDto.validateRole();
+    return this.userEnrollService.enrollInfo(enrollInfoRequestDto, user);
   }
 }
