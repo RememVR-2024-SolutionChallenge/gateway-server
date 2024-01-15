@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'src/user/entities/user.entity';
+import { User } from 'src/user/entity/user.entity';
 import { UserRepository } from 'src/user/user.repository';
 import { RefreshTokenRequestDto } from './dto/request/refresh-token.request.dto';
 import { RefreshTokenResponseDto } from './dto/response/refresh-token.response.dto';

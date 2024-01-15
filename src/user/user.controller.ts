@@ -5,11 +5,11 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { UserEnrollService } from './user-enroll.service';
+import { UserEnrollService } from './service/user-enroll.service';
 import { EnrollInfoRequestDto } from './dto/request/enroll-info.request.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
-import { User } from './entities/user.entity';
+import { User } from './entity/user.entity';
 import { AuthUser } from 'src/auth/decorator/auth-user.decorator';
 
 @ApiTags('USER')
@@ -23,7 +23,7 @@ export class UserController {
   })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Post()
+  @Post('/enroll/info')
   enrollInfo(
     @Body() enrollInfoRequestDto: EnrollInfoRequestDto,
     @AuthUser() user: User,
@@ -31,4 +31,13 @@ export class UserController {
     enrollInfoRequestDto.validateRole();
     return this.userEnrollService.enrollInfo(enrollInfoRequestDto, user);
   }
+
+  // @ApiOperation({
+  //   summary: '최초가입자 환자-보호자 등록',
+  //   description: '이메일 인증 후, 보호자-환자 연결',
+  // })
+  // @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  // @Post('/enroll/care')
+  // enrollCareRecipient(@Body() nvjk, @AuthUser() user: User) {}
 }

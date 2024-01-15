@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from './user.repository';
-import { EnrollInfoRequestDto } from './dto/request/enroll-info.request.dto';
-import { User } from './entities/user.entity';
+import { UserRepository } from '../user.repository';
+import { EnrollInfoRequestDto } from '../dto/request/enroll-info.request.dto';
+import { User } from '../entity/user.entity';
 
 @Injectable()
 export class UserEnrollService {
@@ -11,6 +11,10 @@ export class UserEnrollService {
     const { role } = dto;
     user.role = role;
     await this.userRepository.save(user);
+
+    if (role == 'CareRecipient') {
+    }
+
     return;
   }
 }
