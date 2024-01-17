@@ -7,10 +7,14 @@ import { UserRepository } from '../user.repository';
 import { EnrollInfoRequestDto } from '../dto/request/enroll-info.request.dto';
 import { User } from '../entity/user.entity';
 import { EnrollCareRequestDto } from '../dto/request/enroll-care.reuqest.dto';
+import { EmailService } from 'src/common/email/email.service';
 
 @Injectable()
 export class UserEnrollService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly emailService: EmailService,
+  ) {}
 
   async enrollInfo(dto: EnrollInfoRequestDto, user: User): Promise<void> {
     const { role } = dto;
@@ -33,7 +37,8 @@ export class UserEnrollService {
     if (email == user.email)
       throw new BadRequestException('자기 자신을 등록할 수 없습니다.');
 
-    const certificate = Math.floor(Math.random() * 10000);
+    const certificate = String(Math.floor(Math.random() * 10000));
+    this.emailService.sendCareRelationshipCert(certificate);
 
     return;
   }
