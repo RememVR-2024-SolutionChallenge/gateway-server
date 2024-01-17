@@ -38,7 +38,7 @@ export class UserEnrollService {
       throw new BadRequestException('자기 자신을 등록할 수 없습니다.');
 
     const certificate = String(Math.floor(Math.random() * 10000));
-    this.emailService.sendCareRelationshipCert(certificate);
+    this.emailService.sendCareRelationshipCert(email, certificate);
 
     return;
   }
