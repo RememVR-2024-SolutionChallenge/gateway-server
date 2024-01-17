@@ -25,6 +25,9 @@ jobs:
         env:
           SECRETS_CONTEXT: ${{ toJson(secrets) }}
 
+      - name: Set up GCP GMAIL Credential
+        run: echo "${{ secrets.GCP_GMAIL_SERVICE_ACCOUNT }}" > gmail-service-account.json
+
       - id: 'auth'
         uses: 'google-github-actions/auth@v1'
         with:
