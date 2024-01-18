@@ -8,12 +8,14 @@ import { EnrollInfoRequestDto } from '../dto/request/enroll-info.request.dto';
 import { User } from '../data/entity/user.entity';
 import { EnrollCareRequestDto } from '../dto/request/enroll-care.reuqest.dto';
 import { EmailService } from 'src/common/email/email.service';
+import { CareEnrollRepository } from '../data/repository/in-memory/care-enroll.repository';
 
 @Injectable()
 export class UserEnrollService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly emailService: EmailService,
+    private readonly careEnrollRepository: CareEnrollRepository,
   ) {}
 
   async enrollInfo(dto: EnrollInfoRequestDto, user: User): Promise<void> {
@@ -41,8 +43,15 @@ export class UserEnrollService {
       4,
       '0',
     );
-    this.emailService.sendCareRelationshipCert(email, certificate);
-    // this.
+
+    // certificate 이메일로 발송
+    await this.emailService.sendCareRelationshipCert(email, certificate);
+    // certificate을 redis로 저장
+    await this.careEnrollRepository.saveCertFor30m(
+      user.email,
+      email,
+      certificate,
+    );
 
     return;
   }

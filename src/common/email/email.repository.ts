@@ -16,8 +16,6 @@ export class EmailRepository {
       host: 'smtp.gmail.com',
       port: 465,
       secure: true,
-      // port: 587,
-      // secrue: false,
       auth: {
         user: this.configService.get('NODEMAILER_USER'),
         pass: this.configService.get('NODEMAILER_PASS'),
@@ -33,7 +31,6 @@ export class EmailRepository {
       text: body,
     });
 
-    console.log('Message sent: %s', info.messageId);
     return {
       status: 'Success',
       code: 200,

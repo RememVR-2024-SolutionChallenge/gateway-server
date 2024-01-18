@@ -43,7 +43,7 @@ export class UserController {
   enrollCareEmail(
     @Body() enrollCareRequestDto: EnrollCareRequestDto,
     @AuthUser() user: User,
-  ) {
+  ): Promise<void> {
     return this.userEnrollService.enrollCareEmail(enrollCareRequestDto, user);
   }
 
