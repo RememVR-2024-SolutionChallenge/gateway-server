@@ -11,7 +11,8 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/domain/auth/guard/jwt-auth.guard';
 import { User } from './data/entity/user.entity';
 import { AuthUser } from 'src/domain/auth/decorator/auth-user.decorator';
-import { EnrollCareRequestDto } from './dto/request/enroll-care.reuqest.dto';
+import { EnrollCareEmailRequestDto } from './dto/request/enroll-care-email.reuqest.dto';
+import { EnrollCareCertRequestDto } from './dto/request/enroll-care-cert.request.dto';
 
 @ApiTags('USER')
 @Controller('user')
@@ -34,28 +35,36 @@ export class UserController {
   }
 
   @ApiOperation({
-    summary: '최초가입자 환자-보호자 등록(1)',
-    description: '인풋으로 피보호자의 이메일을 받아서 인증번호 발송',
+    summary: '최초가입자 환자-보호자 등록(1): 이메일 발송',
+    description: '연결하기 위해 피보호자의 이메일로 인증번호 발송',
   })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('/enroll/care/email')
   enrollCareEmail(
-    @Body() enrollCareRequestDto: EnrollCareRequestDto,
+    @Body() enrollCareEmailRequestDto: EnrollCareEmailRequestDto,
     @AuthUser() user: User,
   ): Promise<void> {
-    return this.userEnrollService.enrollCareEmail(enrollCareRequestDto, user);
+    return this.userEnrollService.enrollCareEmail(
+      enrollCareEmailRequestDto,
+      user,
+    );
   }
 
-  // @ApiOperation({
-  //   summary: '최초가입자 환자-보호자 등록(2)',
-  //   description:
-  //     '인풋으로 인증번호 받고, 확인 후에 케어관계 등록할 수 있도록 함',
-  // })
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard)
-  // @Post('/enroll/care/certificate')
-  // enrollCareCert(@Body() nvjk, @AuthUser() user: User) {
-  //   return;
-  // }
+  @ApiOperation({
+    summary: '최초가입자 환자-보호자 등록(2): 인증번호 인증',
+    description: '인증번호 확인 후, 케어관계 등록',
+  })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('/enroll/care/certificate')
+  enrollCareCert(
+    @Body() enrollCareCertRequestDto: EnrollCareCertRequestDto,
+    @AuthUser() user: User,
+  ): Promise<void> {
+    return this.userEnrollService.enrollCareCert(
+      enrollCareCertRequestDto,
+      user,
+    );
+  }
 }
