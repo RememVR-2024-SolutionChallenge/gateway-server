@@ -21,12 +21,10 @@ export class UserEnrollService {
   ) {}
 
   async enrollInfo(dto: EnrollInfoRequestDto, user: User): Promise<void> {
-    const { role } = dto;
-
     // 역할 등록
-    user.role = role;
+    user.role = dto.role;
     // 피보호자의 경우에는 여기서 등록이 마무리 될 수 있도록
-    if (role == 'CareRecipient') user.isEnrolled = true;
+    if (dto.role == 'CareRecipient') user.isEnrolled = true;
     await this.userRepository.save(user);
   }
 
@@ -39,6 +37,8 @@ export class UserEnrollService {
 
     if (!careRecipient)
       throw new NotFoundException('피보호자의 계정이 존재하지 않습니다.');
+    if (careRecipient.role != 'CareRecipient')
+      throw new BadRequestException('피보호자만 등록할 수 있습니다.');
     if (email == user.email)
       throw new BadRequestException('자기 자신을 등록할 수 없습니다.');
 
