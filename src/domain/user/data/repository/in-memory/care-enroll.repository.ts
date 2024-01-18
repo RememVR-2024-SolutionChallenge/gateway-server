@@ -16,4 +16,8 @@ export class CareEnrollRepository {
     const key = `cert:${giverEmail}:${recipientEmail}`;
     return await this.redis.set(key, cert, 'EX', 60 * 30);
   }
+
+  async getCert(key: string): Promise<string | null> {
+    return await this.redis.get(key);
+  }
 }
