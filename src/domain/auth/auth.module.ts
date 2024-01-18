@@ -8,17 +8,19 @@ import { GoogleStrategy } from './strategy/google.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { UserRepository } from 'src/domain/user/user.repository';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync({
-      useFactory: async () => {
-        return {
-          secret: process.env.JWT_SECRET_KEY,
-        };
-      },
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET_KEY'),
+      }),
+      inject: [ConfigService],
     }),
+    ConfigModule,
   ],
   controllers: [AuthController],
   providers: [GoogleStrategy, JwtStrategy, AuthService, UserRepository],

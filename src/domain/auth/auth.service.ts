@@ -6,12 +6,14 @@ import { RefreshTokenRequestDto } from './dto/request/refresh-token.request.dto'
 import { RefreshTokenResponseDto } from './dto/response/refresh-token.response.dto';
 import { GoogleAuthResponseDto } from './dto/response/google-auth.response.dto';
 import { GoogleAuthProfileType } from './type/google-auth-profile.type';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async googleAuthCallback(req): Promise<GoogleAuthResponseDto> {
@@ -44,17 +46,13 @@ export class AuthService {
     dto: RefreshTokenRequestDto,
   ): Promise<RefreshTokenResponseDto> {
     const { refreshToken } = dto;
-    // Verify refresh token
-    // JWT Refresh Token 검증 로직
     const decodedRefreshToken = this.jwtService.verify(refreshToken, {
-      secret: process.env.JWT_REFRESH_SECRET,
+      secret: this.configService.get('JWT_REFRESH_SECRET'),
     });
 
-    // Check if user exists
     const userId = decodedRefreshToken.id;
     const user = await this.userRepository.findById(userId);
-
-    if (user.refreshToken != refreshToken) {
+    if (!user || user.refreshToken != refreshToken) {
       throw new UnauthorizedException('유효하지 않은 리프레시 토큰입니다.');
     }
 
@@ -64,21 +62,20 @@ export class AuthService {
     };
   }
 
-  async updateRefreshToken(id: string): Promise<string> {
+  private async updateRefreshToken(id: string): Promise<string> {
     const refreshToken = await this.jwtService.signAsync(
-      { id },
-      { expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRE },
+      { id, type: 'refresh' },
+      { expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRE') },
     );
-    console.log(refreshToken);
     await this.userRepository.updateRefreshToken(id, refreshToken);
 
     return refreshToken;
   }
 
-  async generateAccessToken(id: string): Promise<string> {
+  private async generateAccessToken(id: string): Promise<string> {
     return await this.jwtService.signAsync(
-      { id },
-      { expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRE },
+      { id, type: 'access' },
+      { expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRE') },
     );
   }
 }

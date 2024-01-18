@@ -15,10 +15,14 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: any, done: VerifiedCallback): Promise<void> {
-    const { id } = payload;
+    const { id, type } = payload;
     const user: User = await this.userRepository.findById(id);
+
     if (!user) {
-      throw new UnauthorizedException('올바르지 않은 인증정보입니다.');
+      done(new UnauthorizedException('올바르지 않은 인증정보입니다.'), null);
+    }
+    if (type != 'access') {
+      done(new UnauthorizedException('올바르지 않은 토큰의 종류입니다.'), null);
     }
 
     done(null, user);
