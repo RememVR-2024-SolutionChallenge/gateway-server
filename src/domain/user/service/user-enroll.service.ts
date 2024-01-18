@@ -3,9 +3,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { UserRepository } from '../user.repository';
+import { UserRepository } from '../data/repository/main/user.repository';
 import { EnrollInfoRequestDto } from '../dto/request/enroll-info.request.dto';
-import { User } from '../entity/user.entity';
+import { User } from '../data/entity/user.entity';
 import { EnrollCareRequestDto } from '../dto/request/enroll-care.reuqest.dto';
 import { EmailService } from 'src/common/email/email.service';
 
@@ -42,6 +42,7 @@ export class UserEnrollService {
       '0',
     );
     this.emailService.sendCareRelationshipCert(email, certificate);
+    // this.
 
     return;
   }

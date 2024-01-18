@@ -9,7 +9,7 @@ import { UserEnrollService } from './service/user-enroll.service';
 import { EnrollInfoRequestDto } from './dto/request/enroll-info.request.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/domain/auth/guard/jwt-auth.guard';
-import { User } from './entity/user.entity';
+import { User } from './data/entity/user.entity';
 import { AuthUser } from 'src/domain/auth/decorator/auth-user.decorator';
 import { EnrollCareRequestDto } from './dto/request/enroll-care.reuqest.dto';
 
