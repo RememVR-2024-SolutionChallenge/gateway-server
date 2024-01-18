@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import { User } from './entity/user.entity';
+import { User } from '../../entity/user.entity';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -13,6 +13,10 @@ export class UserRepository extends Repository<User> {
 
   async findById(id: string): Promise<User> {
     return this.repository.findOneBy({ id });
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    return this.repository.findOneBy({ email });
   }
 
   async updateRefreshToken(

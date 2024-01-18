@@ -23,7 +23,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
           error: 'Expired',
         });
       }
-
       throw new UnauthorizedException('올바르지 않은 JWT 토큰입니다.');
     }
 
