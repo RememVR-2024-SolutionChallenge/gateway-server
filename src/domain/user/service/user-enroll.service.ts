@@ -11,6 +11,8 @@ import { EnrollCareEmailRequestDto } from '../dto/request/enroll-care-email.reuq
 import { EmailService } from 'src/common/email/email.service';
 import { CareEnrollRepository } from '../data/repository/in-memory/care-enroll.repository';
 import { EnrollCareCertRequestDto } from '../dto/request/enroll-care-cert.request.dto';
+import { CareRelation } from '../data/entity/care-relation.entity';
+import { CareRelationRepository } from '../data/repository/main/care-relation.repository';
 
 @Injectable()
 export class UserEnrollService {
@@ -18,6 +20,7 @@ export class UserEnrollService {
     private readonly userRepository: UserRepository,
     private readonly emailService: EmailService,
     private readonly careEnrollRepository: CareEnrollRepository,
+    private readonly careRelationRepository: CareRelationRepository,
   ) {}
 
   async enrollInfo(dto: EnrollInfoRequestDto, user: User): Promise<void> {
@@ -69,6 +72,19 @@ export class UserEnrollService {
       throw new UnauthorizedException('인증정보가 일치하지 않습니다.');
 
     // 보호관계 등록
-    return;
+    const relation = new CareRelation();
+    relation.careGiverId = user.id;
+    try {
+      relation.careRecipientId = (
+        await this.userRepository.findByEmail(dto.email)
+      ).id;
+    } catch {
+      throw new BadRequestException('피보호자의 계정이 존재하지 않습니다.');
+    }
+    await this.careRelationRepository.save(relation);
+
+    // 보호자: 최초 정보등록 완료
+    user.isEnrolled = true;
+    await this.userRepository.save(user);
   }
 }

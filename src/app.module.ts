@@ -6,6 +6,7 @@ import { User } from './domain/user/data/entity/user.entity';
 import { AuthModule } from './domain/auth/auth.module';
 import { EmailModule } from './common/email/email.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { CareRelation } from './domain/user/data/entity/care-relation.entity';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
-        entities: [User],
+        entities: [User, CareRelation],
         migrations: [__dirname + '/src/migrations/*.ts'],
         autoLoadEntities: true,
         charset: 'utf8mb4',
