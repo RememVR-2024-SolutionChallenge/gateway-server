@@ -24,8 +24,8 @@ export class UserEnrollService {
   ) {}
 
   async enrollInfo(dto: EnrollInfoRequestDto, user: User): Promise<void> {
-    // 역할 등록
     user.role = dto.role;
+    user.name = dto.name;
     // 피보호자의 경우에는 여기서 등록이 마무리 될 수 있도록
     if (dto.role == 'CareRecipient') user.isEnrolled = true;
     await this.userRepository.save(user);

@@ -4,6 +4,7 @@ import {
   Body,
   UseGuards,
   ValidationPipe,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UserEnrollService } from './service/user-enroll.service';
 import { EnrollInfoRequestDto } from './dto/request/enroll-info.request.dto';
@@ -30,6 +31,8 @@ export class UserController {
     @Body() enrollInfoRequestDto: EnrollInfoRequestDto,
     @AuthUser() user: User,
   ): Promise<void> {
+    if (user.isEnrolled)
+      throw new ForbiddenException('이미 정보 등록이 완료된 사용자입니다.');
     enrollInfoRequestDto.validateRole();
     return this.userEnrollService.enrollInfo(enrollInfoRequestDto, user);
   }
@@ -45,6 +48,8 @@ export class UserController {
     @Body() enrollCareEmailRequestDto: EnrollCareEmailRequestDto,
     @AuthUser() user: User,
   ): Promise<void> {
+    if (user.isEnrolled)
+      throw new ForbiddenException('이미 정보 등록이 완료된 사용자입니다.');
     return this.userEnrollService.enrollCareEmail(
       enrollCareEmailRequestDto,
       user,
@@ -62,6 +67,8 @@ export class UserController {
     @Body() enrollCareCertRequestDto: EnrollCareCertRequestDto,
     @AuthUser() user: User,
   ): Promise<void> {
+    if (user.isEnrolled)
+      throw new ForbiddenException('이미 정보 등록이 완료된 사용자입니다.');
     return this.userEnrollService.enrollCareCert(
       enrollCareCertRequestDto,
       user,
