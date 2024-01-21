@@ -7,6 +7,7 @@ import { AuthModule } from './api/auth/auth.module';
 import { EmailModule } from './common/email/email.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { CareRelation } from './api/user/data/entity/care-relation.entity';
+import { GcpModule } from './common/gcp/gcp.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { CareRelation } from './api/user/data/entity/care-relation.entity';
     UserModule,
     AuthModule,
     EmailModule,
+    GcpModule,
   ],
   controllers: [],
   providers: [],
