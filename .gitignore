@@ -39,4 +39,4 @@ lerna-debug.log*
 .dev.env
 
 # GCP Security
-gmail-service-account.json
+gcp-service-account.json
