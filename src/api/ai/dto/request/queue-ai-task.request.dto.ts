@@ -8,10 +8,8 @@ export class QueueAiTaskRequestDto {
   @IsNotEmpty()
   type: 'scene' | 'avatar';
 
-  @ApiProperty({ description: '3DGS에서 사용할 비디오' })
-  @IsString()
-  @IsNotEmpty()
-  video: string;
+  @ApiProperty({ type: 'string', format: 'binary' })
+  video: Express.Multer.File;
 
   validateType() {
     if (this.type != 'scene' && this.type != 'avatar') {

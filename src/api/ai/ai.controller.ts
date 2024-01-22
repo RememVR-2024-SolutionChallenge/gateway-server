@@ -4,8 +4,15 @@ import {
   Body,
   UseGuards,
   UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiTags,
+  ApiConsumes,
+  ApiBody,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/api/auth/guard/jwt-auth.guard';
 import { AuthUser } from 'src/api/auth/decorator/auth-user.decorator';
 import { AiQueueService } from './service/ai-queue.service';
@@ -23,14 +30,17 @@ export class AiController {
     description: '요청 시에 AI서버 쪽 큐(Queue)에 등록',
   })
   @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: QueueAiTaskRequestDto })
   @UseGuards(JwtAuthGuard)
   @Post('/source')
   @UseInterceptors(FileInterceptor('video'))
   async QueueAiTask(
+    @UploadedFile() video: Express.Multer.File,
     @Body() requestDto: QueueAiTaskRequestDto,
     @AuthUser() user: User,
   ) {
     requestDto.validateType();
-    return this.aiQueueService.queueAiTask(requestDto, user);
+    return this.aiQueueService.queueAiTask(requestDto, video, user);
   }
 }
