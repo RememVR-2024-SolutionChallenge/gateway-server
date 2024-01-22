@@ -1,17 +1,11 @@
 import { Module } from '@nestjs/common';
-import { CloudStorageService } from './cloud-storage/cloud-storage.service';
 import { CloudStorageRepository } from './cloud-storage/cloud-storage.repository';
-import { CloudTasksService } from './cloud-tasks/cloud-tasks.service';
 import { CloudTasksRepository } from './cloud-tasks/cloud-tasks.repository';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [],
-  providers: [
-    CloudStorageService,
-    CloudStorageRepository,
-    CloudTasksService,
-    CloudTasksRepository,
-  ],
-  exports: [CloudStorageService, CloudTasksService],
+  imports: [ConfigModule],
+  providers: [CloudStorageRepository, CloudTasksRepository],
+  exports: [CloudStorageRepository, CloudTasksRepository],
 })
 export class GcpModule {}
