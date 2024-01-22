@@ -8,6 +8,7 @@ import { EmailModule } from './common/email/email.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { CareRelation } from './api/user/data/entity/care-relation.entity';
 import { GcpModule } from './common/gcp/gcp.module';
+import { AiModule } from './api/ai/ai.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { GcpModule } from './common/gcp/gcp.module';
     UserModule,
     AuthModule,
     EmailModule,
+    AiModule,
     GcpModule,
   ],
   controllers: [],
