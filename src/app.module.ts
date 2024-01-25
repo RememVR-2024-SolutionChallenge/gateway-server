@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UserModule } from './api/user/user.module';
+import { UserModule } from './domain/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './api/user/data/entity/user.entity';
-import { AuthModule } from './api/auth/auth.module';
+import { User } from './domain/user/data/entity/user.entity';
+import { AuthModule } from './domain/auth/auth.module';
 import { EmailModule } from './common/email/email.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
-import { CareRelation } from './api/user/data/entity/care-relation.entity';
+import { CareRelation } from './domain/user/data/entity/care-relation.entity';
 import { GcpModule } from './common/gcp/gcp.module';
-import { AiModule } from './api/ai/ai.module';
+import { AiModule } from './domain/ai/ai.module';
 
 @Module({
   imports: [

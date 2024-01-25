@@ -13,8 +13,8 @@ import {
   ApiConsumes,
   ApiBody,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/api/auth/guard/jwt-auth.guard';
-import { AuthUser } from 'src/api/auth/decorator/auth-user.decorator';
+import { JwtAuthGuard } from 'src/domain/auth/guard/jwt-auth.guard';
+import { AuthUser } from 'src/domain/auth/decorator/auth-user.decorator';
 import { AiQueueService } from './service/ai-queue.service';
 import { User } from '../user/data/entity/user.entity';
 import { QueueAiTaskRequestDto } from './dto/request/queue-ai-task.request.dto';
