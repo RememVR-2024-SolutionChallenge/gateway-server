@@ -10,7 +10,7 @@ import {
 import { AuthService } from './auth.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GoogleAuthResponseDto } from './dto/response/google-auth.response.dto';
-import { GoogleAuthGuard } from './guard/google-auth.guard';
+import { GoogleAuthGuard } from '../../common/auth/guard/google-auth.guard';
 import { RefreshTokenRequestDto } from './dto/request/refresh-token.request.dto';
 import { RefreshTokenResponseDto } from './dto/response/refresh-token.response.dto';
 

@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { AuthUser } from '../auth/decorator/auth-user.decorator';
+import { JwtAuthGuard } from '../../common/auth/guard/jwt-auth.guard';
+import { AuthUser } from '../../common/auth/decorator/auth-user.decorator';
 import { User } from '../user/entity/user.entity';
 
 @ApiTags('Group')
