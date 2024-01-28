@@ -7,12 +7,7 @@ import { Group } from './entity/group.entity';
 export class GroupService {
   constructor(private readonly groupRepository: GroupRepository) {}
 
-  async getMyGroup(user: User) {
-    if (user.role != 'CareGiver' && user.role != 'CareRecipient') {
-      throw new BadRequestException(
-        '최초 정보 기입 후 이용할 수 있는 항목입니다.',
-      );
-    }
+  async getMyGroup(user: User): Promise<Group> {
     if (user.role == 'CareGiver') {
       return await this.groupRepository.findByCareGiverId(user.id);
     }
