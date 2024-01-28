@@ -60,10 +60,10 @@ export class User {
   createdAt: Date;
 
   @ApiProperty({ description: '수정일' })
-  @UpdateDateColumn()
+  @UpdateDateColumn({ select: false })
   updatedAt: Date;
 
   @ApiProperty({ description: '삭제일' })
-  @DeleteDateColumn()
+  @DeleteDateColumn({ select: false })
   deletedAt: Date | null;
 }

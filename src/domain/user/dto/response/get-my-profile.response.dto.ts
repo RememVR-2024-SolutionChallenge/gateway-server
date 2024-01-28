@@ -7,7 +7,6 @@ export class GetMyProfileReponseDto extends PickType(User, [
   'role',
   'isEnrolled',
   'createdAt',
-  'updatedAt',
 ]) {
   static of(user: User): GetMyProfileReponseDto {
     return {
@@ -16,7 +15,6 @@ export class GetMyProfileReponseDto extends PickType(User, [
       role: user.role,
       isEnrolled: user.isEnrolled,
       createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
     };
   }
 }
