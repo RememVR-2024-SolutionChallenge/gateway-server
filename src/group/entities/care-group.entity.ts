@@ -9,13 +9,13 @@ import {
 
 @Entity({ schema: 'remember_me', name: 'care_group' })
 export class CareGroup {
-  @ApiProperty({ description: '보호자 이메일' })
+  @ApiProperty({ description: '환자 아이디' })
   @PrimaryColumn()
-  careGiverId: string;
+  careRecipientId: string[];
 
-  @ApiProperty({ description: '피보호자 이메일' })
-  @PrimaryColumn()
-  careRecipientId: string;
+  @ApiProperty({ description: '보호자 아이디 목록' })
+  @
+  careGiverIds: string;
 
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn()

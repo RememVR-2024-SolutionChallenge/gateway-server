@@ -6,9 +6,10 @@ import { User } from './domain/user/entity/user.entity';
 import { AuthModule } from './domain/auth/auth.module';
 import { EmailModule } from './common/email/email.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
-import { CareGroup } from './domain/user/entity/care-group.entity';
+import { CareGroup } from './group/entities/care-group.entity';
 import { GcpModule } from './common/gcp/gcp.module';
 import { AiModule } from './domain/ai/ai.module';
+import { GroupModule } from './group/group.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { AiModule } from './domain/ai/ai.module';
     EmailModule,
     AiModule,
     GcpModule,
+    GroupModule,
   ],
   controllers: [],
   providers: [],

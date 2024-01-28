@@ -14,7 +14,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { CareGroup } from './care-group.entity';
+import { CareGroup } from '../../../group/entities/care-group.entity';
 
 @Entity({ schema: 'remember_me', name: 'user' })
 export class User {
@@ -59,34 +59,4 @@ export class User {
   @ApiProperty({ description: '삭제일' })
   @DeleteDateColumn()
   deletedAt: Date | null;
-
-  // @ApiProperty({ description: '(본인이 환자인 경우) 본인의 보호자' })
-  // @ManyToMany(() => User)
-  // @JoinTable({
-  //   name: 'care_relation',
-  //   joinColumn: { name: 'careRecipientId', referencedColumnName: 'id' },
-  //   inverseJoinColumn: { name: 'careGiverId', referencedColumnName: 'id' },
-  // })
-  // careGivers: User[];
-
-  // @ApiProperty({ description: '(본인이 보호자인 경우) 본인의 피보호자' })
-  // @OneToOne(() => User)
-  // @JoinTable({
-  //   name: 'care_relation',
-  //   joinColumn: { name: 'careGiverId', referencedColumnName: 'id' },
-  //   inverseJoinColumn: { name: 'careRecipientId', referencedColumnName: 'id' },
-  // })
-  // careRecipient: User;
-
-  @ManyToMany(() => User)
-  @JoinTable({
-    name: 'care_relation',
-    joinColumn: { name: 'careRecipientId', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'careGiverId', referencedColumnName: 'id' },
-  })
-  careGivers: User[];
-
-  @OneToOne(() => User)
-  @JoinColumn({ name: 'careRecipientId' })
-  careRecipient: User;
 }
