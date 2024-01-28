@@ -27,7 +27,7 @@ import { GroupModule } from './group/group.module';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
-        entities: [User, CareGroup],
+        entities: [User, Group],
         migrations: [__dirname + '/src/migrations/*.ts'],
         autoLoadEntities: true,
         charset: 'utf8mb4',

@@ -38,6 +38,8 @@ export class UserEnrollService {
     const { email } = dto;
     const careRecipient = await this.userRepository.findByEmail(email);
 
+    if (user.role != 'CareGiver')
+      throw new BadRequestException('보호자만 등록할 수 있습니다.');
     if (!careRecipient)
       throw new NotFoundException('피보호자의 계정이 존재하지 않습니다.');
     if (careRecipient.role != 'CareRecipient')
@@ -64,25 +66,30 @@ export class UserEnrollService {
     dto: EnrollCareCertRequestDto,
     user: User,
   ): Promise<void> {
+    const { email: recipientEmail, certificate } = dto;
+    if (user.role != 'CareGiver')
+      throw new BadRequestException('보호자만 등록할 수 있습니다.');
+
     // certficate의 유효성 검사
-    const key = `cert:${user.email}:${dto.email}`;
+    const key = `cert:${user.email}:${recipientEmail}`;
     const cert = await this.careEnrollRepository.getCert(key);
     if (!cert) throw new UnauthorizedException('유효한 인증정보가 없습니다.');
-    if (cert != dto.certificate)
+    if (cert != certificate)
       throw new UnauthorizedException('인증정보가 일치하지 않습니다.');
 
+    // 피보호자 검색
+    const careRecipient = await this.userRepository.findByEmail(recipientEmail);
+    if (!careRecipient) {
+      throw new BadRequestException('피보호자의 계정이 존재하지 않습니다.');
+    }
+
     // 보호관계 등록
-    // TODO: refactoring to group from care-relation
-    const relation = new Group();
-    // relation.careGiverId = user.id;
-    // try {
-    //   relation.careRecipientId = (
-    //     await this.userRepository.findByEmail(dto.email)
-    //   ).id;
-    // } catch {
-    //   throw new BadRequestException('피보호자의 계정이 존재하지 않습니다.');
-    // }
-    await this.groupRepository.save(relation);
+    const group = new Group();
+    group.id = careRecipient.id;
+    group.recipient = careRecipient;
+    group.givers = group.givers || [];
+    group.givers.push(user);
+    await this.groupRepository.save(group);
 
     // 보호자: 최초 정보등록 완료
     user.isEnrolled = true;

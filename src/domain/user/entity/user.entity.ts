@@ -1,18 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  Entity,
+  PrimaryColumn,
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
+  ManyToOne,
+  OneToOne,
 } from 'typeorm';
 import { Group } from '../../../group/entity/group.entity';
 
@@ -43,6 +38,18 @@ export class User {
   @ApiProperty({ description: '최초 정보 등록 여부', example: 'true' })
   @Column({ default: false })
   isEnrolled: boolean;
+
+  @ApiProperty({
+    description: '소속 그룹(보호자의 경우)',
+  })
+  @ManyToOne(() => Group, (group) => group.givers)
+  groupAsGiver: Group;
+
+  @ApiProperty({
+    description: '소속 그룹(환자의 경우)',
+  })
+  @OneToOne(() => Group, (group) => group.recipient)
+  groupAsRecipient: Group;
 
   @ApiProperty({ description: '리프레시 토큰', example: 'JWTrefreshToken' })
   @Column({ nullable: true, select: false })
