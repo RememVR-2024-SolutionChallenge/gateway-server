@@ -3,7 +3,10 @@ import { ApiProduces, ApiProperty, PickType } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, Validate } from 'class-validator';
 import { User } from 'src/domain/user/entity/user.entity';
 
-export class EnrollInfoRequestDto extends PickType(User, ['role', 'name']) {
+export class EnrollInfoRequestDto extends PickType(User, [
+  'role',
+  'name',
+] as const) {
   @ApiProperty({ enum: ['CareGiver', 'CareRecipient'] })
   @IsString()
   @IsNotEmpty()

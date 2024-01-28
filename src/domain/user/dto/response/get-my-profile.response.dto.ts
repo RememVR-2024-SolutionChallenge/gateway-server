@@ -7,7 +7,7 @@ export class GetMyProfileReponseDto extends PickType(User, [
   'role',
   'isEnrolled',
   'createdAt',
-]) {
+] as const) {
   static of(user: User): GetMyProfileReponseDto {
     return {
       email: user.email,
