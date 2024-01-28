@@ -15,17 +15,19 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/auth/guard/jwt-auth.guard';
 import { AuthUser } from 'src/common/auth/decorator/auth-user.decorator';
-import { AiQueueService } from './service/ai-queue.service';
+import { VrResourceQueueService } from './service/vr-resource-queue.service';
 import { User } from '../user/entity/user.entity';
 import { QueueAiTaskRequestDto } from './dto/request/queue-ai-task.request.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InitEnrollGuard } from 'src/common/auth/guard/init-enroll.guard';
 import { CareGiverGuard } from 'src/common/auth/guard/care-giver.guard';
 
-@ApiTags('Ai')
-@Controller('ai')
-export class AiController {
-  constructor(private readonly aiQueueService: AiQueueService) {}
+@ApiTags('Vr-resource')
+@Controller('vr-resource')
+export class VrResourceController {
+  constructor(
+    private readonly vrResourceQueueService: VrResourceQueueService,
+  ) {}
 
   @ApiOperation({
     summary: '배경, 아바타 생성 요청',
@@ -43,6 +45,6 @@ export class AiController {
     @AuthUser() user: User,
   ) {
     requestDto.validateType();
-    return this.aiQueueService.queueAiTask(requestDto, video, user);
+    return this.vrResourceQueueService.queueAiTask(requestDto, video, user);
   }
 }

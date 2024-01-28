@@ -8,7 +8,7 @@ import { EmailModule } from './common/email/email.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { Group } from './domain/group/entity/group.entity';
 import { GcpModule } from './common/gcp/gcp.module';
-import { AiModule } from './domain/ai/ai.module';
+import { VrResourceModule } from './domain/vr-resource/vr-resource.module';
 import { GroupModule } from './domain/group/group.module';
 
 @Module({
@@ -52,7 +52,7 @@ import { GroupModule } from './domain/group/group.module';
     UserModule,
     AuthModule,
     EmailModule,
-    AiModule,
+    VrResourceModule,
     GcpModule,
     GroupModule,
   ],

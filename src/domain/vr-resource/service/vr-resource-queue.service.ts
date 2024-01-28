@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { createHash } from 'crypto';
 import { CloudStorageRepository } from 'src/common/gcp/cloud-storage/cloud-storage.repository';
-import { AiTaskRequestRepository } from '../data/repository/ai-task-request.repository';
-import { AiTaskRequest } from '../data/document/ai-task-request.document';
+import { AiTaskRequestRepository } from '../repository/ai-task-request.repository';
+import { AiTaskRequest } from '../document/ai-task-request.document';
 
 @Injectable()
-export class AiQueueService {
+export class VrResourceQueueService {
   constructor(
     private readonly cloudStorageRepository: CloudStorageRepository,
     private readonly aiTaskRequestRepository: AiTaskRequestRepository,
