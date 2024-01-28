@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import { Group } from '../entities/group.entity';
+import { Group } from '../entity/group.entity';
 
 @Injectable()
 export class GroupRepository extends Repository<Group> {

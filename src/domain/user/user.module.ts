@@ -7,7 +7,7 @@ import { UserRepository } from './repository/user.repository';
 import { EmailModule } from 'src/common/email/email.module';
 import { CareEnrollRepository } from './repository/care-enroll.repository';
 import { GroupRepository } from '../../group/repository/group.repository';
-import { Group } from '../../group/entities/group.entity';
+import { Group } from '../../group/entity/group.entity';
 import { UserFetchService } from './service/user-fetch.service';
 
 @Module({
