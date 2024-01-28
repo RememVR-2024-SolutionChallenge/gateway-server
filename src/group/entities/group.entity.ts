@@ -7,15 +7,15 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ schema: 'remember_me', name: 'care_group' })
-export class CareGroup {
+@Entity({ schema: 'remember_me', name: 'group' })
+export class Group {
   @ApiProperty({ description: '환자 아이디' })
   @PrimaryColumn()
-  careRecipientId: string[];
+  RecipientId: string[];
 
   @ApiProperty({ description: '보호자 아이디 목록' })
   @
-  careGiverIds: string;
+  GiverIds: string;
 
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn()

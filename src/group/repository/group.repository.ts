@@ -1,13 +1,13 @@
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import { CareGroup } from '../../../group/entities/care-group.entity';
+import { Group } from '../entities/group.entity';
 
 @Injectable()
-export class CareGroupRepository extends Repository<CareGroup> {
+export class GroupRepository extends Repository<Group> {
   constructor(
-    @InjectRepository(CareGroup)
-    private readonly repository: Repository<CareGroup>,
+    @InjectRepository(Group)
+    private readonly repository: Repository<Group>,
   ) {
     super(repository.target, repository.manager);
   }
