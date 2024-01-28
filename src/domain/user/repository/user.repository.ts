@@ -27,13 +27,4 @@ export class UserRepository extends Repository<User> {
     user.refreshToken = refreshToken;
     await this.repository.save(user);
   }
-
-  // async findByIdWithRelations(userId: string): Promise<User | null> {
-  //   return this.repository
-  //     .createQueryBuilder('user')
-  //     .where('user.id = :userId', { userId })
-  //     .leftJoinAndSelect('user.careGivers', 'careGivers')
-  //     .leftJoinAndSelect('user.careRecipient', 'careRecipient')
-  //     .getOne();
-  // }
 }
