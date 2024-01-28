@@ -9,28 +9,31 @@ import {
 } from '@nestjs/common';
 import { UserEnrollService } from './service/user-enroll.service';
 import { EnrollInfoRequestDto } from './dto/request/enroll-info.request.dto';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/domain/auth/guard/jwt-auth.guard';
 import { User } from './entity/user.entity';
 import { AuthUser } from 'src/domain/auth/decorator/auth-user.decorator';
 import { EnrollCareEmailRequestDto } from './dto/request/enroll-care-email.reuqest.dto';
 import { EnrollCareCertRequestDto } from './dto/request/enroll-care-cert.request.dto';
-import { UserFetchService } from './service/user-fetch.service';
+import { GetMyProfileReponseDto } from './dto/response/get-my-profile.response.dto';
 
 @ApiTags('USER')
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userEnrollService: UserEnrollService,
-    private readonly userFetchService: UserFetchService,
-  ) {}
+  constructor(private readonly userEnrollService: UserEnrollService) {}
 
-  @ApiOperation({})
+  @ApiOperation({ summary: '내 프로필 조회' })
   @ApiBearerAuth()
+  @ApiResponse({ type: GetMyProfileReponseDto })
   @UseGuards(JwtAuthGuard)
   @Get('/')
-  async getMyProfile(@AuthUser() user: User) {
-    return this.userFetchService.getMyProfile(user.id);
+  getMyProfile(@AuthUser() user: User): GetMyProfileReponseDto {
+    return GetMyProfileReponseDto.of(user);
   }
 
   @ApiOperation({
