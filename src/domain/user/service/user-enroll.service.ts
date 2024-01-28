@@ -38,8 +38,6 @@ export class UserEnrollService {
     const { email } = dto;
     const careRecipient = await this.userRepository.findByEmail(email);
 
-    if (user.role != 'CareGiver')
-      throw new BadRequestException('보호자만 등록할 수 있습니다.');
     if (!careRecipient)
       throw new NotFoundException('피보호자의 계정이 존재하지 않습니다.');
     if (careRecipient.role != 'CareRecipient')
@@ -67,8 +65,6 @@ export class UserEnrollService {
     user: User,
   ): Promise<void> {
     const { email: recipientEmail, certificate } = dto;
-    if (user.role != 'CareGiver')
-      throw new BadRequestException('보호자만 등록할 수 있습니다.');
 
     // certficate의 유효성 검사
     const key = `cert:${user.email}:${recipientEmail}`;

@@ -19,6 +19,8 @@ import { AiQueueService } from './service/ai-queue.service';
 import { User } from '../user/entity/user.entity';
 import { QueueAiTaskRequestDto } from './dto/request/queue-ai-task.request.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { InitEnrollGuard } from 'src/common/auth/guard/init-enroll.guard';
+import { CareGiverGuard } from 'src/common/auth/guard/care-giver.guard';
 
 @ApiTags('Ai')
 @Controller('ai')
@@ -32,7 +34,7 @@ export class AiController {
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: QueueAiTaskRequestDto })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, InitEnrollGuard, CareGiverGuard)
   @Post('/source')
   @UseInterceptors(FileInterceptor('video'))
   async QueueAiTask(

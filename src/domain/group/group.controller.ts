@@ -13,6 +13,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../common/auth/guard/jwt-auth.guard';
 import { AuthUser } from '../../common/auth/decorator/auth-user.decorator';
 import { User } from '../user/entity/user.entity';
+import { InitEnrollGuard } from 'src/common/auth/guard/init-enroll.guard';
 
 @ApiTags('Group')
 @Controller('group')
@@ -21,7 +22,7 @@ export class GroupController {
 
   @ApiOperation({ summary: '내 케어 그룹 조회' })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, InitEnrollGuard)
   @Get('/')
   async getMyGroup(@AuthUser() user: User) {
     return this.groupService.getMyGroup(user);
