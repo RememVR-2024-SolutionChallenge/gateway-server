@@ -6,10 +6,10 @@ import { User } from './domain/user/entity/user.entity';
 import { AuthModule } from './domain/auth/auth.module';
 import { EmailModule } from './common/email/email.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
-import { Group } from './group/entity/group.entity';
+import { Group } from './domain/group/entity/group.entity';
 import { GcpModule } from './common/gcp/gcp.module';
 import { AiModule } from './domain/ai/ai.module';
-import { GroupModule } from './group/group.module';
+import { GroupModule } from './domain/group/group.module';
 
 @Module({
   imports: [

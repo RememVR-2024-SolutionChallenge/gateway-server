@@ -9,7 +9,7 @@ import {
   ManyToOne,
   OneToOne,
 } from 'typeorm';
-import { Group } from '../../../group/entity/group.entity';
+import { Group } from '../../group/entity/group.entity';
 
 @Entity({ schema: 'remember_me', name: 'user' })
 export class User {

@@ -11,8 +11,8 @@ import { EnrollCareEmailRequestDto } from '../dto/request/enroll-care-email.reuq
 import { EmailService } from 'src/common/email/email.service';
 import { CareEnrollRepository } from '../repository/care-enroll.repository';
 import { EnrollCareCertRequestDto } from '../dto/request/enroll-care-cert.request.dto';
-import { Group } from '../../../group/entity/group.entity';
-import { GroupRepository } from '../../../group/repository/group.repository';
+import { Group } from '../../group/entity/group.entity';
+import { GroupRepository } from '../../group/repository/group.repository';
 
 @Injectable()
 export class UserEnrollService {
