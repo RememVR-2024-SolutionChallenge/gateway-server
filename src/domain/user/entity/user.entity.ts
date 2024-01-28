@@ -22,7 +22,7 @@ export class User {
     description: '유저 구분 아이디',
     example: 'exampleuserid1234',
   })
-  @PrimaryColumn()
+  @PrimaryColumn({})
   id: string;
 
   @ApiProperty({
@@ -44,8 +44,8 @@ export class User {
   @Column({ default: false })
   isEnrolled: boolean;
 
-  @ApiProperty({ description: '리프레시 토,큰', example: 'JWTrefreshToken' })
-  @Column({ nullable: true })
+  @ApiProperty({ description: '리프레시 토큰', example: 'JWTrefreshToken' })
+  @Column({ nullable: true, select: false })
   refreshToken: string | null;
 
   @ApiProperty({ description: '생성일' })
@@ -60,7 +60,24 @@ export class User {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @ApiProperty({ description: '(본인이 환자인 경우) 본인의 보호자' })
+  // @ApiProperty({ description: '(본인이 환자인 경우) 본인의 보호자' })
+  // @ManyToMany(() => User)
+  // @JoinTable({
+  //   name: 'care_relation',
+  //   joinColumn: { name: 'careRecipientId', referencedColumnName: 'id' },
+  //   inverseJoinColumn: { name: 'careGiverId', referencedColumnName: 'id' },
+  // })
+  // careGivers: User[];
+
+  // @ApiProperty({ description: '(본인이 보호자인 경우) 본인의 피보호자' })
+  // @OneToOne(() => User)
+  // @JoinTable({
+  //   name: 'care_relation',
+  //   joinColumn: { name: 'careGiverId', referencedColumnName: 'id' },
+  //   inverseJoinColumn: { name: 'careRecipientId', referencedColumnName: 'id' },
+  // })
+  // careRecipient: User;
+
   @ManyToMany(() => User)
   @JoinTable({
     name: 'care_relation',
@@ -69,12 +86,7 @@ export class User {
   })
   careGivers: User[];
 
-  @ApiProperty({ description: '(본인이 보호자인 경우) 본인의 피보호자' })
   @OneToOne(() => User)
-  @JoinTable({
-    name: 'care_relation',
-    joinColumn: { name: 'careGiverId', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'careRecipientId', referencedColumnName: 'id' },
-  })
+  @JoinColumn({ name: 'careRecipientId' })
   careRecipient: User;
 }

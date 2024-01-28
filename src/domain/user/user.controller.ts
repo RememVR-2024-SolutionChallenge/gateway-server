@@ -5,6 +5,7 @@ import {
   UseGuards,
   ValidationPipe,
   ForbiddenException,
+  Get,
 } from '@nestjs/common';
 import { UserEnrollService } from './service/user-enroll.service';
 import { EnrollInfoRequestDto } from './dto/request/enroll-info.request.dto';
@@ -14,11 +15,23 @@ import { User } from './entity/user.entity';
 import { AuthUser } from 'src/domain/auth/decorator/auth-user.decorator';
 import { EnrollCareEmailRequestDto } from './dto/request/enroll-care-email.reuqest.dto';
 import { EnrollCareCertRequestDto } from './dto/request/enroll-care-cert.request.dto';
+import { UserFetchService } from './service/user-fetch.service';
 
 @ApiTags('USER')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userEnrollService: UserEnrollService) {}
+  constructor(
+    private readonly userEnrollService: UserEnrollService,
+    private readonly userFetchService: UserFetchService,
+  ) {}
+
+  @ApiOperation({})
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get('/')
+  async getMyProfile(@AuthUser() user: User) {
+    return this.userFetchService.getMyProfile(user.id);
+  }
 
   @ApiOperation({
     summary: '최초가입자 정보등록',

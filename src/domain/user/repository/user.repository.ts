@@ -11,11 +11,11 @@ export class UserRepository extends Repository<User> {
     super(repository.target, repository.manager);
   }
 
-  async findById(id: string): Promise<User> {
+  async findById(id: string): Promise<User | null> {
     return this.repository.findOneBy({ id });
   }
 
-  async findByEmail(email: string): Promise<User> {
+  async findByEmail(email: string): Promise<User | null> {
     return this.repository.findOneBy({ email });
   }
 
@@ -27,4 +27,13 @@ export class UserRepository extends Repository<User> {
     user.refreshToken = refreshToken;
     await this.repository.save(user);
   }
+
+  // async findByIdWithRelations(userId: string): Promise<User | null> {
+  //   return this.repository
+  //     .createQueryBuilder('user')
+  //     .where('user.id = :userId', { userId })
+  //     .leftJoinAndSelect('user.careGivers', 'careGivers')
+  //     .leftJoinAndSelect('user.careRecipient', 'careRecipient')
+  //     .getOne();
+  // }
 }
