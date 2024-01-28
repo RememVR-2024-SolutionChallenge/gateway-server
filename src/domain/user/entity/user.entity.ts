@@ -14,7 +14,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { CareRelation } from './care-relation.entity';
+import { CareGroup } from './care-group.entity';
 
 @Entity({ schema: 'remember_me', name: 'user' })
 export class User {

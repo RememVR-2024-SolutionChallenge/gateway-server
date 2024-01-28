@@ -11,8 +11,8 @@ import { EnrollCareEmailRequestDto } from '../dto/request/enroll-care-email.reuq
 import { EmailService } from 'src/common/email/email.service';
 import { CareEnrollRepository } from '../repository/care-enroll.repository';
 import { EnrollCareCertRequestDto } from '../dto/request/enroll-care-cert.request.dto';
-import { CareRelation } from '../entity/care-relation.entity';
-import { CareRelationRepository } from '../repository/care-relation.repository';
+import { CareGroup } from '../entity/care-group.entity';
+import { CareGroupRepository } from '../repository/care-group.repository';
 
 @Injectable()
 export class UserEnrollService {
@@ -20,7 +20,7 @@ export class UserEnrollService {
     private readonly userRepository: UserRepository,
     private readonly emailService: EmailService,
     private readonly careEnrollRepository: CareEnrollRepository,
-    private readonly careRelationRepository: CareRelationRepository,
+    private readonly careRelationRepository: CareGroupRepository,
   ) {}
 
   async enrollInfo(dto: EnrollInfoRequestDto, user: User): Promise<void> {
@@ -72,7 +72,7 @@ export class UserEnrollService {
       throw new UnauthorizedException('인증정보가 일치하지 않습니다.');
 
     // 보호관계 등록
-    const relation = new CareRelation();
+    const relation = new CareGroup();
     relation.careGiverId = user.id;
     try {
       relation.careRecipientId = (

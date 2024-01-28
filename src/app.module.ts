@@ -6,7 +6,7 @@ import { User } from './domain/user/entity/user.entity';
 import { AuthModule } from './domain/auth/auth.module';
 import { EmailModule } from './common/email/email.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
-import { CareRelation } from './domain/user/entity/care-relation.entity';
+import { CareGroup } from './domain/user/entity/care-group.entity';
 import { GcpModule } from './common/gcp/gcp.module';
 import { AiModule } from './domain/ai/ai.module';
 
@@ -26,7 +26,7 @@ import { AiModule } from './domain/ai/ai.module';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
-        entities: [User, CareRelation],
+        entities: [User, CareGroup],
         migrations: [__dirname + '/src/migrations/*.ts'],
         autoLoadEntities: true,
         charset: 'utf8mb4',

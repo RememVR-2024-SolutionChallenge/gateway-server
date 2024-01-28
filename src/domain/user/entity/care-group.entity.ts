@@ -7,8 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ schema: 'remember_me', name: 'care_relation' })
-export class CareRelation {
+@Entity({ schema: 'remember_me', name: 'care_group' })
+export class CareGroup {
   @ApiProperty({ description: '보호자 이메일' })
   @PrimaryColumn()
   careGiverId: string;
