@@ -51,7 +51,7 @@ export class AuthService {
     });
 
     const userId = decodedRefreshToken.id;
-    const user = await this.userRepository.findById(userId);
+    const user = await this.userRepository.findByIdWithRefreshToken(userId);
     if (!user || user.refreshToken != refreshToken) {
       throw new UnauthorizedException('유효하지 않은 리프레시 토큰입니다.');
     }

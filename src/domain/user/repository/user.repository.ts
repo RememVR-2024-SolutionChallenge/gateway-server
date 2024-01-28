@@ -15,6 +15,13 @@ export class UserRepository extends Repository<User> {
     return this.repository.findOneBy({ id });
   }
 
+  async findByIdWithRefreshToken(id: string): Promise<User | null> {
+    return this.repository.findOne({
+      where: { id },
+      select: ['refreshToken'],
+    });
+  }
+
   async findByEmail(email: string): Promise<User | null> {
     return this.repository.findOneBy({ email });
   }
