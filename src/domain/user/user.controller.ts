@@ -22,7 +22,7 @@ import { EnrollCareEmailRequestDto } from './dto/request/enroll-care-email.reuqe
 import { EnrollCareCertRequestDto } from './dto/request/enroll-care-cert.request.dto';
 import { GetMyProfileReponseDto } from './dto/response/get-my-profile.response.dto';
 
-@ApiTags('USER')
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userEnrollService: UserEnrollService) {}

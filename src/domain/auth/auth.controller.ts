@@ -14,7 +14,7 @@ import { GoogleAuthGuard } from './guard/google-auth.guard';
 import { RefreshTokenRequestDto } from './dto/request/refresh-token.request.dto';
 import { RefreshTokenResponseDto } from './dto/response/refresh-token.response.dto';
 
-@ApiTags('AUTH')
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

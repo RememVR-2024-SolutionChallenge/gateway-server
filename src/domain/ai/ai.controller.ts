@@ -20,7 +20,7 @@ import { User } from '../user/entity/user.entity';
 import { QueueAiTaskRequestDto } from './dto/request/queue-ai-task.request.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@ApiTags('AI')
+@ApiTags('Ai')
 @Controller('ai')
 export class AiController {
   constructor(private readonly aiQueueService: AiQueueService) {}
