@@ -4,15 +4,15 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserRepository } from '../data/repository/main/user.repository';
+import { UserRepository } from '../repository/user.repository';
 import { EnrollInfoRequestDto } from '../dto/request/enroll-info.request.dto';
-import { User } from '../data/entity/user.entity';
+import { User } from '../entity/user.entity';
 import { EnrollCareEmailRequestDto } from '../dto/request/enroll-care-email.reuqest.dto';
 import { EmailService } from 'src/common/email/email.service';
-import { CareEnrollRepository } from '../data/repository/in-memory/care-enroll.repository';
+import { CareEnrollRepository } from '../repository/care-enroll.repository';
 import { EnrollCareCertRequestDto } from '../dto/request/enroll-care-cert.request.dto';
-import { CareRelation } from '../data/entity/care-relation.entity';
-import { CareRelationRepository } from '../data/repository/main/care-relation.repository';
+import { CareRelation } from '../entity/care-relation.entity';
+import { CareRelationRepository } from '../repository/care-relation.repository';
 
 @Injectable()
 export class UserEnrollService {

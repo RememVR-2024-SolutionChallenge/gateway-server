@@ -16,7 +16,7 @@ import {
 import { JwtAuthGuard } from 'src/domain/auth/guard/jwt-auth.guard';
 import { AuthUser } from 'src/domain/auth/decorator/auth-user.decorator';
 import { AiQueueService } from './service/ai-queue.service';
-import { User } from '../user/data/entity/user.entity';
+import { User } from '../user/entity/user.entity';
 import { QueueAiTaskRequestDto } from './dto/request/queue-ai-task.request.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 
