@@ -5,6 +5,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
+  Get,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -12,6 +13,7 @@ import {
   ApiTags,
   ApiConsumes,
   ApiBody,
+  ApiResponse,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/auth/guard/jwt-auth.guard';
 import { AuthUser } from 'src/common/auth/decorator/auth-user.decorator';
@@ -21,8 +23,9 @@ import { QueueAiTaskRequestDto } from './dto/request/queue-ai-task.request.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InitEnrollGuard } from 'src/common/auth/guard/init-enroll.guard';
 import { CareGiverGuard } from 'src/common/auth/guard/care-giver.guard';
+import { GetAiTaskQueueResponseDto } from './dto/response/get-ai-task-queue.response.dto';
 
-@ApiTags('Vr-resource')
+@ApiTags('VR-resource')
 @Controller('vr-resource')
 export class VrResourceController {
   constructor(
@@ -39,12 +42,26 @@ export class VrResourceController {
   @UseGuards(JwtAuthGuard, InitEnrollGuard, CareGiverGuard)
   @Post('/source')
   @UseInterceptors(FileInterceptor('video'))
-  async QueueAiTask(
+  async queueAiTask(
     @UploadedFile() video: Express.Multer.File,
     @Body() requestDto: QueueAiTaskRequestDto,
     @AuthUser() user: User,
   ) {
     requestDto.validateType();
     return this.vrResourceQueueService.queueAiTask(requestDto, video, user);
+  }
+
+  @ApiOperation({
+    summary: 'AI 작업(배경, 아바타 생성) 대기 목록 확인',
+  })
+  @ApiBearerAuth()
+  @ApiResponse({ type: [GetAiTaskQueueResponseDto] })
+  @UseGuards(JwtAuthGuard, InitEnrollGuard)
+  @Get('/queue')
+  async getAiTaskQueue(
+    @AuthUser() user: User,
+  ): Promise<GetAiTaskQueueResponseDto[]> {
+    const queue = await this.vrResourceQueueService.getAiTaskQueue(user);
+    return queue.map((item) => GetAiTaskQueueResponseDto.of(item));
   }
 }
