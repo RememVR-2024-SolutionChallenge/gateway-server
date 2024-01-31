@@ -14,8 +14,8 @@ export class VrResourceQueueService {
     private readonly groupService: GroupService,
   ) {}
 
-  async queueAiTask(requestDto, video, user) {
-    const { type } = requestDto;
+  async queueAiTask(requestDto, video, user): Promise<void> {
+    const { type, title } = requestDto;
     const requestId = this.generateRequestId(user.id);
 
     // 1. GCP Cloud Storage에 해당 인풋 저장
@@ -23,14 +23,17 @@ export class VrResourceQueueService {
     await this.cloudStorageRepository.uploadFile(video, videoPath);
 
     // 2. Fire Store에 해당 리퀘스트 관련 데이터 저장
-
-    // const task: AiTaskRequest = {
-    //   type: type,
-    //   status: 'waiting',
-    //   videoPath: videoPath,
-    //   createdAt: new Date(),
-    // };
-    // await this.aiTaskRequestRepository.addTask(requestId, task);
+    const task: AiTaskRequest = {
+      id: requestId,
+      title: title,
+      type: type,
+      status: 'pending',
+      videoPath: videoPath,
+      groupId: (await this.groupService.getMyGroup(user)).id,
+      creatorId: user.id,
+      createdAt: new Date(),
+    };
+    await this.aiTaskRequestRepository.addTask(requestId, task);
 
     // 3. GCP Cloud Tasks로 요청 큐잉하기
 

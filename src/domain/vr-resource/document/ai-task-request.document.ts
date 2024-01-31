@@ -1,4 +1,7 @@
 export interface AiTaskRequest {
+  // 요청 아이디
+  id: string;
+
   // 그룹(환자) 아이디
   groupId: string;
 
