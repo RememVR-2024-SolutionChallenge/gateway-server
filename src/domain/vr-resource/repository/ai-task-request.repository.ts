@@ -16,7 +16,6 @@ export class AiTaskRequestRepository {
     this.collectionPath = '3dgs_request';
   }
 
-  // Firestore에 문서를 추가하는 메서드
   async addTask(documentId: string, data: AiTaskRequest): Promise<void> {
     const documentRef = this.firestore
       .collection(this.collectionPath)
@@ -24,19 +23,13 @@ export class AiTaskRequestRepository {
     await documentRef.set(data);
   }
 
-  // Firestore에서 문서를 검색하는 메서드
-  async getTask(
-    documentId: string,
-  ): Promise<FirebaseFirestore.DocumentData | undefined> {
-    const documentRef = this.firestore
+  async getQueuedTasksByGroupId(groupId: string): Promise<AiTaskRequest[]> {
+    const querySnapshot = await this.firestore
       .collection(this.collectionPath)
-      .doc(documentId);
-    const documentSnapshot = await documentRef.get();
-
-    if (!documentSnapshot.exists) {
-      return undefined;
-    }
-
-    return documentSnapshot.data();
+      .where('groupId', '==', groupId)
+      .where('status', 'in', ['pending', 'processing', 'failed'])
+      .get();
+    const documents = querySnapshot.docs.map((doc) => doc.data());
+    return documents as AiTaskRequest[];
   }
 }
