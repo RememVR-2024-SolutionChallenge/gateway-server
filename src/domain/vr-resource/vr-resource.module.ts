@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Group } from '../group/entity/group.entity';
 import { User } from '../user/entity/user.entity';
 import { GroupRepository } from '../group/repository/group.repository';
+import { AiTaskQueueRepository } from './repository/ai-task-queue.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Group, User]), GcpModule],
@@ -17,6 +18,7 @@ import { GroupRepository } from '../group/repository/group.repository';
     AiTaskRequestRepository,
     GroupService,
     GroupRepository,
+    AiTaskQueueRepository,
   ],
 })
 export class VrResourceModule {}

@@ -5,6 +5,8 @@ import { AiTaskRequestRepository } from '../repository/ai-task-request.repositor
 import { AiTaskRequest } from '../document/ai-task-request.document';
 import { GroupService } from 'src/domain/group/group.service';
 import { User } from 'src/domain/user/entity/user.entity';
+import { AiTaskQueueRepository } from '../repository/ai-task-queue.repository';
+import { CloudFunctionsRepository } from 'src/common/gcp/cloud-functions/cloud-functions.repository';
 
 @Injectable()
 export class VrResourceQueueService {
@@ -12,6 +14,8 @@ export class VrResourceQueueService {
     private readonly cloudStorageRepository: CloudStorageRepository,
     private readonly aiTaskRequestRepository: AiTaskRequestRepository,
     private readonly groupService: GroupService,
+    private readonly aiTaskQueueRepository: AiTaskQueueRepository,
+    private readonly cloudFunctionsRepository: CloudFunctionsRepository,
   ) {}
 
   async queueAiTask(requestDto, video, user): Promise<void> {
@@ -35,10 +39,11 @@ export class VrResourceQueueService {
     };
     await this.aiTaskRequestRepository.addTask(requestId, task);
 
-    // 3. GCP Cloud Tasks로 요청 큐잉하기
+    // 3. Redis Queue에 Task들 저장
+    await this.aiTaskQueueRepository.queueRequest(requestId);
 
-    // 4. AI 서버로 새 태스크 알리기
-
+    // 4. GCP Cloud Functions 트리거
+    await this.cloudFunctionsRepository.triggerAiScheduler(requestId);
     return;
   }
 
