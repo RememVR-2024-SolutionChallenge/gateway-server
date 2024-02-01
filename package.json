@@ -24,6 +24,7 @@
     "@google-cloud/storage": "^7.7.0",
     "@google-cloud/tasks": "^4.0.1",
     "@liaoliaots/nestjs-redis": "^9.0.5",
+    "@nestjs/axios": "^3.0.1",
     "@nestjs/common": "^9.4.3",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^9.4.3",
