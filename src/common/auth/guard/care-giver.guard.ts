@@ -15,9 +15,6 @@ export class CareGiverGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
-    console.log(request);
-    console.log(user);
-
     if (!user) {
       throw new UnauthorizedException();
     }
