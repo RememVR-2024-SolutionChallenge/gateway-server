@@ -14,6 +14,6 @@ export class CloudFunctionsRepository {
   }
 
   async triggerAiScheduler(): Promise<void> {
-    await this.httpService.post(this.url + '/test');
+    await this.httpService.post(this.url + '/engine-trigger');
   }
 }
