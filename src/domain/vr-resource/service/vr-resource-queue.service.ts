@@ -43,7 +43,7 @@ export class VrResourceQueueService {
     await this.aiTaskQueueRepository.queueRequest(requestId);
 
     // 4. GCP Cloud Functions 트리거
-    await this.cloudFunctionsRepository.triggerAiScheduler(requestId);
+    await this.cloudFunctionsRepository.triggerAiScheduler();
     return;
   }
 
