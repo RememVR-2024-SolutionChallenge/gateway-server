@@ -22,7 +22,7 @@ import { User } from '../user/entity/user.entity';
 import { QueueAiTaskRequestDto } from './dto/request/queue-ai-task.request.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InitEnrollGuard } from 'src/common/auth/guard/init-enroll.guard';
-import { CareGiverGuard } from 'src/common/auth/guard/care-giver.guard';
+import { CareGiverGuard } from 'src/common/auth/guard/role.guard';
 import { GetAiTaskQueueResponseDto } from './dto/response/get-ai-task-queue.response.dto';
 
 @ApiTags('VR-resource')

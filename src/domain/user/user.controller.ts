@@ -21,7 +21,7 @@ import { AuthUser } from 'src/common/auth/decorator/auth-user.decorator';
 import { EnrollCareEmailRequestDto } from './dto/request/enroll-care-email.reuqest.dto';
 import { EnrollCareCertRequestDto } from './dto/request/enroll-care-cert.request.dto';
 import { GetMyProfileReponseDto } from './dto/response/get-my-profile.response.dto';
-import { CareGiverGuard } from 'src/common/auth/guard/care-giver.guard';
+import { CareGiverGuard } from 'src/common/auth/guard/role.guard';
 import {
   InitEnrollGuard,
   NotInitEnrollGuard,
