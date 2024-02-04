@@ -26,7 +26,11 @@ jobs:
           SECRETS_CONTEXT: ${{ toJson(secrets) }}
 
       - name: Set up GCP Credential
-        run: echo "${{ secrets.GCP_SERVICE_ACCOUNT }}" > gcp-service-account.json
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "gcp-service-account.json"
+          json: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       - id: 'auth'
         uses: 'google-github-actions/auth@v1'
