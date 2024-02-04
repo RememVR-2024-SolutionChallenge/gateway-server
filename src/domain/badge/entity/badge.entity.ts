@@ -20,7 +20,10 @@ export class Badge {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ description: '뱃지 종류(랜덤으로 부여)' })
+  @ApiProperty({
+    description: '뱃지 종류(랜덤으로 부여)',
+    enum: ['GREAT_JOB', 'EXCELLENT_WORK', 'LOVELY'],
+  })
   @Column()
   type: 'GREAT_JOB' | 'EXCELLENT_WORK' | 'LOVELY';
 
