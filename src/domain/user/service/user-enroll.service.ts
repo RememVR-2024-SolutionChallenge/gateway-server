@@ -26,8 +26,6 @@ export class UserEnrollService {
   async enrollInfo(dto: EnrollInfoRequestDto, user: User): Promise<void> {
     user.role = dto.role;
     user.name = dto.name;
-    // 피보호자의 경우에는 여기서 등록이 마무리 될 수 있도록
-    if (dto.role == 'CareRecipient') user.isEnrolled = true;
     await this.userRepository.save(user);
   }
 
@@ -87,7 +85,9 @@ export class UserEnrollService {
     group.givers.push(user);
     await this.groupRepository.save(group);
 
-    // 보호자: 최초 정보등록 완료
+    // 보호자, 피보호자: 최초 정보등록 완료
+    careRecipient.isEnrolled = true;
+    await this.userRepository.save(careRecipient);
     user.isEnrolled = true;
     await this.userRepository.save(user);
   }
