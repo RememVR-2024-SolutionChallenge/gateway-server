@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Badge } from 'src/domain/badge/entity/badge.entity';
 import { User } from 'src/domain/user/entity/user.entity';
 import {
   Entity,
@@ -26,6 +27,10 @@ export class Group {
   @ApiProperty({ description: '보호자 정보 목록' })
   @OneToMany(() => User, (user) => user.groupAsGiver)
   givers: User[];
+
+  @ApiProperty({ description: '뱃지 목록' })
+  @OneToMany(() => Badge, (badge) => badge.group)
+  badges: Badge[];
 
   @CreateDateColumn()
   createdAt: Date;

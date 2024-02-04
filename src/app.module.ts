@@ -10,6 +10,8 @@ import { Group } from './domain/group/entity/group.entity';
 import { GcpModule } from './common/gcp/gcp.module';
 import { VrResourceModule } from './domain/vr-resource/vr-resource.module';
 import { GroupModule } from './domain/group/group.module';
+import { BadgeModule } from './domain/badge/badge.module';
+import { Badge } from './domain/badge/entity/badge.entity';
 
 @Module({
   imports: [
@@ -27,7 +29,7 @@ import { GroupModule } from './domain/group/group.module';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
-        entities: [User, Group],
+        entities: [User, Group, Badge],
         migrations: [__dirname + '/src/migrations/*.ts'],
         autoLoadEntities: true,
         charset: 'utf8mb4',
@@ -51,6 +53,7 @@ import { GroupModule } from './domain/group/group.module';
     }),
     UserModule,
     AuthModule,
+    BadgeModule,
     EmailModule,
     VrResourceModule,
     GcpModule,
