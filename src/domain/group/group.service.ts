@@ -12,7 +12,7 @@ export class GroupService {
       return await this.groupRepository.findByCareGiverId(user.id);
     }
     if (user.role == 'CareRecipient') {
-      return await this.groupRepository.findByCareRecepientId(user.id);
+      return await this.groupRepository.findByCareRecipientId(user.id);
     }
   }
 }

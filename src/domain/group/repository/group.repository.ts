@@ -19,9 +19,9 @@ export class GroupRepository extends Repository<Group> {
     });
   }
 
-  async findByCareRecepientId(recepientId: string): Promise<Group> {
+  async findByCareRecipientId(recepientId: string): Promise<Group> {
     return await this.findOne({
-      where: { givers: { id: recepientId } },
+      where: { id: recepientId },
       relations: ['givers', 'recipient'],
     });
   }
