@@ -34,6 +34,6 @@ export class Badge {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @ManyToOne(() => Group, (group) => group.id)
+  @ManyToOne(() => Group, (group) => group.badges, { onDelete: 'CASCADE' })
   group: Group;
 }
