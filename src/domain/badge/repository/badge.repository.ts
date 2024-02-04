@@ -12,6 +12,25 @@ export class BadgeRepository extends Repository<Badge> {
     super(repository.target, repository.manager);
   }
 
+  async findByGroupIdDuingYearAndMonth(
+    groupId: string,
+    year: number,
+    month: number,
+  ): Promise<Badge[]> {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0);
+
+    return this.repository
+      .createQueryBuilder('badge')
+      .innerJoinAndSelect('badge.group', 'group')
+      .where('group.id = :groupId', { groupId })
+      .andWhere('badge.createdAt BETWEEN :startDate AND :endDate', {
+        startDate,
+        endDate,
+      })
+      .getMany();
+  }
+
   async findByGroupId(groupId: string): Promise<Badge[]> {
     return this.repository.find({
       where: { group: { id: groupId } },

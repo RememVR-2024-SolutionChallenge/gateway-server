@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BadgeRepository } from './repository/badge.repository';
 import { User } from '../user/entity/user.entity';
 import { GroupRepository } from '../group/repository/group.repository';
@@ -31,11 +31,16 @@ export class BadgeService {
     return;
   }
 
-  async getBadgeList(user: User): Promise<void> {
-    // 그룹 아이디 검색
+  async getBadgeList(
+    user: User,
+    year: number,
+    month: number,
+  ): Promise<Badge[]> {
     const groupId = (await this.groupService.getMyGroup(user)).id;
-
-    // 뱃지 리스트 검색
-    const badgeList = await this.badgeRepository.findByGroupId(groupId);
+    return await this.badgeRepository.findByGroupIdDuingYearAndMonth(
+      groupId,
+      year,
+      month,
+    );
   }
 }
