@@ -24,4 +24,14 @@ export class BadgeController {
   async giveBadge(@AuthUser() user: User): Promise<void> {
     return await this.badgeService.giveBadge(user);
   }
+
+  @ApiOperation({
+    summary: '뱃지 리스트 조회',
+  })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, InitEnrollGuard)
+  @Get('/')
+  async getBadgeList(@AuthUser() user: User): Promise<void> {
+    return await this.badgeService.getBadgeList(user);
+  }
 }

@@ -3,12 +3,14 @@ import { BadgeRepository } from './repository/badge.repository';
 import { User } from '../user/entity/user.entity';
 import { GroupRepository } from '../group/repository/group.repository';
 import { Badge } from './entity/badge.entity';
+import { GroupService } from '../group/group.service';
 
 @Injectable()
 export class BadgeService {
   constructor(
     private readonly badgeRepository: BadgeRepository,
     private readonly groupRepository: GroupRepository,
+    private readonly groupService: GroupService,
   ) {}
 
   async giveBadge(user: User): Promise<void> {
@@ -27,5 +29,13 @@ export class BadgeService {
     badge.group = group;
     await this.badgeRepository.save(badge);
     return;
+  }
+
+  async getBadgeList(user: User): Promise<void> {
+    // 그룹 아이디 검색
+    const groupId = (await this.groupService.getMyGroup(user)).id;
+
+    // 뱃지 리스트 검색
+    const badgeList = await this.badgeRepository.findByGroupId(groupId);
   }
 }
