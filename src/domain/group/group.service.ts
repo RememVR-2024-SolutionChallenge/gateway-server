@@ -9,10 +9,10 @@ export class GroupService {
 
   async getMyGroup(user: User): Promise<Group> {
     if (user.role == 'CareGiver') {
-      return await this.groupRepository.findByCareGiverId(user.id);
+      return await this.groupRepository.findByCareGiverIdWithUsers(user.id);
     }
     if (user.role == 'CareRecipient') {
-      return await this.groupRepository.findByCareRecipientId(user.id);
+      return await this.groupRepository.findByCareRecipientIdWithUsers(user.id);
     }
   }
 }

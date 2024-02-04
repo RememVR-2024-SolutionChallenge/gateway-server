@@ -12,17 +12,23 @@ export class GroupRepository extends Repository<Group> {
     super(repository.target, repository.manager);
   }
 
-  async findByCareGiverId(giverId: string): Promise<Group> {
+  async findByCareGiverIdWithUsers(giverId: string): Promise<Group> {
     return await this.findOne({
       where: { givers: { id: giverId } },
       relations: ['givers', 'recipient'],
     });
   }
 
-  async findByCareRecipientId(recepientId: string): Promise<Group> {
+  async findByCareRecipientIdWithUsers(recepientId: string): Promise<Group> {
     return await this.findOne({
       where: { id: recepientId },
       relations: ['givers', 'recipient'],
+    });
+  }
+
+  async findByCareRecipientId(recepientId: string): Promise<Group> {
+    return await this.findOne({
+      where: { recipient: { id: recepientId } },
     });
   }
 }
