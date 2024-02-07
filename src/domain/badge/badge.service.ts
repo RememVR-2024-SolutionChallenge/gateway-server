@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { BadgeRepository } from './repository/badge.repository';
 import { User } from '../user/entity/user.entity';
 import { GroupRepository } from '../group/repository/group.repository';
@@ -16,6 +16,14 @@ export class BadgeService {
   async giveBadge(user: User): Promise<void> {
     // 그룹 검색
     const group = await this.groupRepository.findByCareRecipientId(user.id);
+
+    // 뱃지가 이미 존재하는 경우
+    const todayBadge = await this.badgeRepository.findByGroupIdAndDate(
+      group.id,
+      new Date(),
+    );
+    if (todayBadge)
+      throw new BadRequestException('오늘의 뱃지를 이미 받으셨습니다.');
 
     //뱃지 부여
     const badge = new Badge();
