@@ -4,7 +4,7 @@ This server operates as a **`traditional application server`**, but also serves 
 
 ## 🛠 Architecture
 
-![gateway](https://github.com/RememberMe-2024-SolutionChallenge/gateway-server/assets/54667577/89c1713b-7b4f-4824-bf9d-6141e4b41085)
+![architecture](./docs/assets/architecture.jpg)
 
 ## ⚙️ Features
 
