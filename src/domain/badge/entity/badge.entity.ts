@@ -16,7 +16,7 @@ import {
 
 @Entity({ schema: 'remember_me', name: 'badge' })
 export class Badge {
-  @ApiProperty({ description: '그룹 아이디(환자의 유저 아이디에서 차용)' })
+  @ApiProperty({ description: '뱃지 아이디' })
   @PrimaryGeneratedColumn()
   id: number;
 
