@@ -24,12 +24,15 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { InitEnrollGuard } from 'src/common/auth/guard/init-enroll.guard';
 import { CareGiverGuard } from 'src/common/auth/guard/role.guard';
 import { GetAiTaskQueueResponseDto } from './dto/response/get-ai-task-queue.response.dto';
+import { VrResourceService } from './service/vr-resource.service';
+import { GetVrResourcesResponseDto } from './dto/response/get-vr-resources.response.dto';
 
 @ApiTags('VR-resource')
 @Controller('vr-resource')
 export class VrResourceController {
   constructor(
     private readonly vrResourceQueueService: VrResourceQueueService,
+    private readonly vrResourceService: VrResourceService,
   ) {}
 
   @ApiOperation({
@@ -49,6 +52,20 @@ export class VrResourceController {
   ) {
     requestDto.validateType();
     return this.vrResourceQueueService.queueAiTask(requestDto, video, user);
+  }
+
+  @ApiOperation({
+    summary: '완성된 VR 자원(배경, 아바타) 불러오기',
+  })
+  @ApiBearerAuth()
+  @ApiResponse({ type: [GetVrResourcesResponseDto] })
+  @UseGuards(JwtAuthGuard, InitEnrollGuard)
+  @Get('/')
+  async getVrResources(
+    @AuthUser() user: User,
+  ): Promise<GetVrResourcesResponseDto> {
+    const vrResourceList = await this.vrResourceService.getVrResources(user);
+    return GetVrResourcesResponseDto.of(vrResourceList);
   }
 
   @ApiOperation({

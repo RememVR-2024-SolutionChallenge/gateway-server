@@ -9,9 +9,12 @@ import { Group } from '../group/entity/group.entity';
 import { User } from '../user/entity/user.entity';
 import { GroupRepository } from '../group/repository/group.repository';
 import { AiTaskQueueRepository } from './repository/ai-task-queue.repository';
+import { VrResourceService } from './service/vr-resource.service';
+import { VrResourceRepository } from './repository/vr-resource.repository';
+import { VrResource } from './entity/vr-resource.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Group, User]), GcpModule],
+  imports: [TypeOrmModule.forFeature([Group, User, VrResource]), GcpModule],
   controllers: [VrResourceController],
   providers: [
     VrResourceQueueService,
@@ -19,6 +22,8 @@ import { AiTaskQueueRepository } from './repository/ai-task-queue.repository';
     GroupService,
     GroupRepository,
     AiTaskQueueRepository,
+    VrResourceService,
+    VrResourceRepository,
   ],
 })
 export class VrResourceModule {}
