@@ -12,26 +12,33 @@ import {
 
 @Entity({ schema: 'remember_me', name: 'vr_resource' })
 export class VrResource {
-  @ApiProperty({ description: 'VR 리소스 아이디' })
+  @ApiProperty({ description: 'VR 리소스 아이디', example: '123' })
   @PrimaryColumn()
   id: string;
 
-  @ApiProperty({ description: 'VR 리소스 제목' })
+  @ApiProperty({ description: 'VR 리소스 제목', example: '아들 아바타' })
   @Column()
   title: string;
 
-  @ApiProperty({ description: 'VR 리소스 위치 (Cloud Storage 내에서)' })
+  @ApiProperty({
+    description: 'VR 리소스 위치 (Cloud Storage 내에서)',
+    example: '/to/file',
+  })
   @Column()
   filePath: string;
 
   @ApiProperty({
     description: '타입 (아바타, 배경)',
     enum: ['avatar', 'scene'],
+    example: 'avatar',
   })
   @Column()
   type: 'avatar' | 'scene';
 
-  @ApiProperty({ description: 'VR 리소스 생성일' })
+  @ApiProperty({
+    description: 'VR 리소스 생성일',
+    example: '2021-09-23T00:00:00.000Z',
+  })
   @CreateDateColumn()
   createdAt: Date;
 
