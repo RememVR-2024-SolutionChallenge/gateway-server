@@ -2,6 +2,7 @@ import { ApiProperty, PickType } from '@nestjs/swagger';
 import { VrResource } from '../../entity/vr-resource.entity';
 
 export class VrResourceDto extends PickType(VrResource, [
+  'id',
   'title',
   'type',
   'createdAt',
@@ -17,6 +18,7 @@ export class VrResourceDto extends PickType(VrResource, [
 
   static of(vrResource: VrResource, storageUrls: string[]): VrResourceDto {
     return {
+      id: vrResource.id,
       title: vrResource.title,
       type: vrResource.type,
       storageUrls: storageUrls,

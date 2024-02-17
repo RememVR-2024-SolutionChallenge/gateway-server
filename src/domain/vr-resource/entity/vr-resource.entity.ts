@@ -12,7 +12,11 @@ import {
 
 @Entity({ schema: 'remember_me', name: 'vr_resource' })
 export class VrResource {
-  @ApiProperty({ description: 'VR 리소스 아이디', example: '123' })
+  @ApiProperty({
+    description:
+      'VR 리소스 아이디(로컬에서 다운로드 받을 때, 중복검사 등으로 이용가능)',
+    example: '123',
+  })
   @PrimaryColumn()
   id: string;
 
