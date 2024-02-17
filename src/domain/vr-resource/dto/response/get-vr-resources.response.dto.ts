@@ -7,7 +7,7 @@ export class VrResourceDto extends PickType(VrResource, [
   'createdAt',
 ] as const) {
   @ApiProperty({
-    description: 'storage URL',
+    description: '인증된 storage URL (10분 간 유효)',
     example: [
       'https://storage.googleapis.com/...',
       'https://storage.googleapis.com/...',
