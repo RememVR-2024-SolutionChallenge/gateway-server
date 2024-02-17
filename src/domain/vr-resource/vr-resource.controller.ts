@@ -97,8 +97,8 @@ export class VrResourceController {
   async getVrResources(
     @AuthUser() user: User,
   ): Promise<GetVrResourcesResponseDto> {
-    const vrResourceList = await this.vrResourceService.getVrResources(user);
-    return GetVrResourcesResponseDto.of(vrResourceList);
+    const vrResourceDtos = await this.vrResourceService.getVrResources(user);
+    return new GetVrResourcesResponseDto(vrResourceDtos);
   }
 
   @ApiOperation({
