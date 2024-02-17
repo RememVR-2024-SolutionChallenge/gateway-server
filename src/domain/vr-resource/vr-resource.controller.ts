@@ -6,6 +6,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Get,
+  UploadedFiles,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -19,13 +20,17 @@ import { JwtAuthGuard } from 'src/common/auth/guard/jwt-auth.guard';
 import { AuthUser } from 'src/common/auth/decorator/auth-user.decorator';
 import { VrResourceQueueService } from './service/vr-resource-queue.service';
 import { User } from '../user/entity/user.entity';
-import { QueueAiTaskRequestDto } from './dto/request/queue-ai-task.request.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { GenerateSceneRequestDto } from './dto/request/generate-scene.request.dto';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
 import { InitEnrollGuard } from 'src/common/auth/guard/init-enroll.guard';
 import { CareGiverGuard } from 'src/common/auth/guard/role.guard';
 import { GetAiTaskQueueResponseDto } from './dto/response/get-ai-task-queue.response.dto';
 import { VrResourceService } from './service/vr-resource.service';
 import { GetVrResourcesResponseDto } from './dto/response/get-vr-resources.response.dto';
+import { GenerateAvatarRequestDto } from './dto/request/generate-avatar.request.dto';
 
 @ApiTags('VR-resource')
 @Controller('vr-resource')
@@ -36,22 +41,50 @@ export class VrResourceController {
   ) {}
 
   @ApiOperation({
-    summary: '배경, 아바타 생성 요청',
+    summary: '배경 생성 요청',
     description: '요청 시에 AI서버 쪽 큐(Queue)에 등록',
   })
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: QueueAiTaskRequestDto })
+  @ApiBody({ type: GenerateSceneRequestDto })
   @UseGuards(JwtAuthGuard, InitEnrollGuard, CareGiverGuard)
-  @Post('/source')
+  @Post('/source/scene')
   @UseInterceptors(FileInterceptor('video'))
-  async queueAiTask(
+  async generateScene(
     @UploadedFile() video: Express.Multer.File,
-    @Body() requestDto: QueueAiTaskRequestDto,
+    @Body() requestDto: GenerateSceneRequestDto,
     @AuthUser() user: User,
   ) {
-    requestDto.validateType();
-    return this.vrResourceQueueService.queueAiTask(requestDto, video, user);
+    return this.vrResourceQueueService.generateScene(requestDto, video, user);
+  }
+
+  @ApiOperation({
+    summary: '아바타 생성 요청',
+    description: '요청 시에 AI서버 쪽 큐(Queue)에 등록',
+  })
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: GenerateAvatarRequestDto })
+  @UseGuards(JwtAuthGuard, InitEnrollGuard, CareGiverGuard)
+  @Post('/source/avatar')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'video', maxCount: 1 },
+      { name: 'image', maxCount: 1 },
+    ]),
+  )
+  async generateAvatar(
+    @UploadedFiles()
+    files: { video: Express.Multer.File[]; image: Express.Multer.File[] },
+    @Body() requestDto: GenerateAvatarRequestDto,
+    @AuthUser() user: User,
+  ) {
+    return this.vrResourceQueueService.generateAvatar(
+      requestDto,
+      files.video[0],
+      files.image[0],
+      user,
+    );
   }
 
   @ApiOperation({

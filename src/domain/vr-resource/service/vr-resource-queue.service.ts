@@ -7,6 +7,8 @@ import { GroupService } from 'src/domain/group/group.service';
 import { User } from 'src/domain/user/entity/user.entity';
 import { AiTaskQueueRepository } from '../repository/ai-task-queue.repository';
 import { CloudFunctionsRepository } from 'src/common/gcp/cloud-functions/cloud-functions.repository';
+import { GenerateSceneRequestDto } from '../dto/request/generate-scene.request.dto';
+import { GenerateAvatarRequestDto } from '../dto/request/generate-avatar.request.dto';
 
 @Injectable()
 export class VrResourceQueueService {
@@ -18,20 +20,25 @@ export class VrResourceQueueService {
     private readonly cloudFunctionsRepository: CloudFunctionsRepository,
   ) {}
 
-  async queueAiTask(requestDto, video, user): Promise<void> {
-    const { type, title } = requestDto;
+  async generateScene(
+    requestDto: GenerateSceneRequestDto,
+    video: Express.Multer.File,
+    user: User,
+  ): Promise<void> {
+    const { title, location } = requestDto;
     const requestId = this.generateRequestId(user.id);
 
-    // 1. GCP Cloud Storage에 해당 인풋 저장
-    const videoPath = `3dgs-request/${type}/${requestId}`;
+    // 1. Store video source to GCP Cloud Storage.
+    const videoPath = `3dgs-request/scene/${requestId}/video`;
     await this.cloudStorageRepository.uploadFile(video, videoPath);
 
-    // 2. Fire Store에 해당 리퀘스트 관련 데이터 저장
+    // 2. Store request data to Firestore.
     const task: AiTaskRequest = {
       id: requestId,
       title: title,
-      type: type,
+      type: 'scene',
       status: 'pending',
+      location: location,
       videoPath: videoPath,
       groupId: (await this.groupService.getMyGroup(user)).id,
       creatorId: user.id,
@@ -39,10 +46,48 @@ export class VrResourceQueueService {
     };
     await this.aiTaskRequestRepository.addTask(requestId, task);
 
-    // 3. Redis Queue에 Task들 저장
+    // 3. Store taskId to Redis Queue.
     await this.aiTaskQueueRepository.queueRequest(requestId);
 
-    // 4. GCP Cloud Functions 트리거
+    // 4. Trigger GCP Cloud Functions.
+    await this.cloudFunctionsRepository.triggerAiScheduler();
+    return;
+  }
+
+  async generateAvatar(
+    requestDto: GenerateAvatarRequestDto,
+    video: Express.Multer.File,
+    image: Express.Multer.File,
+    user: User,
+  ): Promise<void> {
+    const { title, gender } = requestDto;
+    const requestId = this.generateRequestId(user.id);
+
+    // 1. Store image source to GCP Cloud Storage.
+    const imagePath = `3dgs-request/avatar/${requestId}/image`;
+    await this.cloudStorageRepository.uploadFile(image, imagePath);
+    const videoPath = `3dgs-request/avatar/${requestId}/video`;
+    await this.cloudStorageRepository.uploadFile(video, videoPath);
+
+    // 2. Store request data to Firestore.
+    const task: AiTaskRequest = {
+      id: requestId,
+      title: title,
+      type: 'avatar',
+      status: 'pending',
+      gender: gender,
+      videoPath: videoPath,
+      imagePath: imagePath,
+      groupId: (await this.groupService.getMyGroup(user)).id,
+      creatorId: user.id,
+      createdAt: new Date(),
+    };
+    await this.aiTaskRequestRepository.addTask(requestId, task);
+
+    // 3. Store taskId to Redis Queue.
+    await this.aiTaskQueueRepository.queueRequest(requestId);
+
+    // 4. Trigger GCP Cloud Functions.
     await this.cloudFunctionsRepository.triggerAiScheduler();
     return;
   }

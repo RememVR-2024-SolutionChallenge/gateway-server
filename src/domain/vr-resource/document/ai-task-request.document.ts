@@ -20,6 +20,15 @@ export interface AiTaskRequest {
   // 인풋 비디오의 위치
   videoPath: string;
 
-  // 생성 일자 d
+  // 인풋 이미지의 위치
+  imagePath?: string;
+
+  // 아바타 성별
+  gender?: 'male' | 'female' | 'neutral';
+
+  // 배경 위치
+  location?: 'indoor' | 'outdoor' | 'unbound';
+
+  // 생성 일자
   createdAt: Date;
 }
