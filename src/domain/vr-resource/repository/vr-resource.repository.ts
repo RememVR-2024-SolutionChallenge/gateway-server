@@ -17,4 +17,8 @@ export class VrResourceRepository extends Repository<VrResource> {
       where: { group: { id: groupId } },
     });
   }
+
+  async findById(id: string): Promise<VrResource> {
+    return this.repository.findOne({ where: { id } });
+  }
 }

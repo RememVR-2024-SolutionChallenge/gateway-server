@@ -26,6 +26,12 @@ export class GroupRepository extends Repository<Group> {
     });
   }
 
+  async findByCareGiverId(giverId: string): Promise<Group> {
+    return await this.findOne({
+      where: { givers: { id: giverId } },
+    });
+  }
+
   async findByCareRecipientId(recepientId: string): Promise<Group> {
     return await this.findOne({
       where: { recipient: { id: recepientId } },

@@ -9,6 +9,8 @@ import { VrVideo } from './entity/vr-video.entity';
 import { VrVideoController } from './vr-video.controller';
 import { VrResource } from '../vr-resource/entity/vr-resource.entity';
 import { VrVideoService } from './service/vr-video.service';
+import { VrResourceRepository } from '../vr-resource/repository/vr-resource.repository';
+import { VrVideoRepository } from './repository/vr-video.repository';
 
 @Module({
   imports: [
@@ -16,6 +18,12 @@ import { VrVideoService } from './service/vr-video.service';
     GcpModule,
   ],
   controllers: [VrVideoController],
-  providers: [VrVideoService, GroupService, GroupRepository],
+  providers: [
+    VrVideoService,
+    GroupService,
+    GroupRepository,
+    VrResourceRepository,
+    VrVideoRepository,
+  ],
 })
 export class VrVideoModule {}
