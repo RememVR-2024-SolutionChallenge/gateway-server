@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Badge } from 'src/domain/badge/entity/badge.entity';
 import { User } from 'src/domain/user/entity/user.entity';
 import { VrResource } from 'src/domain/vr-resource/entity/vr-resource.entity';
+import { VrVideo } from 'src/domain/vr-video/entity/vr-video.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -32,6 +33,10 @@ export class Group {
   @ApiProperty({ description: '뱃지 목록' })
   @OneToMany(() => Badge, (badge) => badge.group)
   badges: Badge[];
+
+  @ApiProperty({ description: 'VR 비디오 목록' })
+  @OneToMany(() => VrVideo, (vrVideo) => vrVideo.group)
+  vrVideos: VrVideo[];
 
   @ApiProperty({ description: 'VR 리소스 목록' })
   @OneToMany(() => VrResource, (vrResoucre) => vrResoucre.group)

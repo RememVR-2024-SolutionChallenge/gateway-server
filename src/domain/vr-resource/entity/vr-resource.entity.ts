@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Group } from 'src/domain/group/entity/group.entity';
+import { VrVideo } from 'src/domain/vr-video/entity/vr-video.entity';
 import {
   Entity,
   CreateDateColumn,
@@ -8,6 +9,8 @@ import {
   Column,
   ManyToOne,
   PrimaryColumn,
+  OneToMany,
+  ManyToMany,
 } from 'typeorm';
 
 @Entity({ schema: 'remember_me', name: 'vr_resource' })
@@ -54,4 +57,10 @@ export class VrResource {
 
   @ManyToOne(() => Group, (group) => group.badges, { onDelete: 'CASCADE' })
   group: Group;
+
+  @OneToMany(() => VrVideo, (vrVideo) => vrVideo.scene)
+  vrVideosAsScene: VrVideo[];
+
+  @ManyToMany(() => VrVideo, (vrVideo) => vrVideo.avatars)
+  vrVideosAsAvatar: VrVideo[];
 }

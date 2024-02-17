@@ -13,6 +13,7 @@ import { GroupModule } from './domain/group/group.module';
 import { BadgeModule } from './domain/badge/badge.module';
 import { Badge } from './domain/badge/entity/badge.entity';
 import { VrResource } from './domain/vr-resource/entity/vr-resource.entity';
+import { VrVideo } from './domain/vr-video/entity/vr-video.entity';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { VrResource } from './domain/vr-resource/entity/vr-resource.entity';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
-        entities: [User, Group, Badge, VrResource],
+        entities: [User, Group, Badge, VrResource, VrVideo],
         migrations: [__dirname + '/src/migrations/*.ts'],
         autoLoadEntities: true,
         charset: 'utf8mb4',
