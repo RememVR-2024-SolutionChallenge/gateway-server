@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createHash } from 'crypto';
-import { CloudStorageRepository } from 'src/common/gcp/cloud-storage/cloud-storage.repository';
+import { VrResourceStorageRepository } from 'src/common/gcp/cloud-storage/vr-resource-storage.repository';
 import { AiTaskRequestRepository } from '../repository/ai-task-request.repository';
 import { AiTaskRequest } from '../document/ai-task-request.document';
 import { GroupService } from 'src/domain/group/group.service';
@@ -13,7 +13,7 @@ import { GenerateAvatarRequestDto } from '../dto/request/generate-avatar.request
 @Injectable()
 export class VrResourceQueueService {
   constructor(
-    private readonly cloudStorageRepository: CloudStorageRepository,
+    private readonly vrResourceStorageRepository: VrResourceStorageRepository,
     private readonly aiTaskRequestRepository: AiTaskRequestRepository,
     private readonly groupService: GroupService,
     private readonly aiTaskQueueRepository: AiTaskQueueRepository,
@@ -30,7 +30,7 @@ export class VrResourceQueueService {
 
     // 1. Store video source to GCP Cloud Storage.
     const videoPath = `3dgs-request/scene/${requestId}/video`;
-    await this.cloudStorageRepository.uploadFile(video, videoPath);
+    await this.vrResourceStorageRepository.uploadFile(video, videoPath);
 
     // 2. Store request data to Firestore.
     const task: AiTaskRequest = {
@@ -65,9 +65,9 @@ export class VrResourceQueueService {
 
     // 1. Store image source to GCP Cloud Storage.
     const imagePath = `3dgs-request/avatar/${requestId}/image`;
-    await this.cloudStorageRepository.uploadFile(image, imagePath);
+    await this.vrResourceStorageRepository.uploadFile(image, imagePath);
     const videoPath = `3dgs-request/avatar/${requestId}/video`;
-    await this.cloudStorageRepository.uploadFile(video, videoPath);
+    await this.vrResourceStorageRepository.uploadFile(video, videoPath);
 
     // 2. Store request data to Firestore.
     const task: AiTaskRequest = {

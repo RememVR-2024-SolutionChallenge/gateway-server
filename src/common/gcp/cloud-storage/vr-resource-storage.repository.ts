@@ -3,22 +3,24 @@ import { Storage } from '@google-cloud/storage';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class CloudStorageRepository {
+export class VrResourceStorageRepository {
   private storage: Storage;
-  private bucketName: string;
+  private vrResourceBucket: string;
 
   constructor(private configService: ConfigService) {
     this.storage = new Storage({
       keyFilename: this.configService.get<string>('GCP_KEY_FILE'),
     });
-    this.bucketName = this.configService.get<string>('GCP_STORAGE_BUCKET');
+    this.vrResourceBucket = this.configService.get<string>(
+      'GCP_STORAGE_RESOURCE_BUCKET',
+    );
   }
 
   async uploadFile(
     file: Express.Multer.File,
     destination: string,
   ): Promise<void> {
-    const bucket = this.storage.bucket(this.bucketName);
+    const bucket = this.storage.bucket(this.vrResourceBucket);
     const cloudFile = bucket.file(destination);
     await cloudFile.save(file.buffer);
   }
@@ -26,7 +28,7 @@ export class CloudStorageRepository {
   async generateSignedUrlList(prefix: string): Promise<string[]> {
     const findOptions = { prefix: prefix };
     const [files] = await this.storage
-      .bucket(this.bucketName)
+      .bucket(this.vrResourceBucket)
       .getFiles(findOptions);
 
     const urls = await Promise.all(
@@ -45,7 +47,7 @@ export class CloudStorageRepository {
       expires: Date.now() + 10 * 60 * 1000,
     };
     const [url] = await this.storage
-      .bucket(this.bucketName)
+      .bucket(this.vrResourceBucket)
       .file(filePath)
       .getSignedUrl(options);
     return url;
