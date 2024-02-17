@@ -21,7 +21,7 @@ export class VrResource {
   title: string;
 
   @ApiProperty({
-    description: 'VR 리소스 위치 (Cloud Storage 내에서)',
+    description: 'VR 리소스 위치 (Cloud Storage 내의 폴더 위치, 파일 아님.)',
     example: '/to/file',
   })
   @Column()
