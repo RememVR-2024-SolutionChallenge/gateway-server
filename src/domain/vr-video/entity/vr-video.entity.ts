@@ -10,6 +10,7 @@ import {
   ManyToOne,
   PrimaryColumn,
   ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 @Entity({ schema: 'remember_me', name: 'vr_video' })
@@ -26,13 +27,6 @@ export class VrVideo {
   @Column()
   title: string;
 
-  @ApiProperty({
-    description: 'VR 비디오 위치 (Cloud Storage 내의 폴더 위치, 파일 아님.)',
-    example: 'to/file/',
-  })
-  @Column()
-  filePath: string;
-
   @ManyToOne(() => Group, (group) => group.badges, { onDelete: 'CASCADE' })
   group: Group;
 
@@ -43,6 +37,17 @@ export class VrVideo {
 
   @ManyToMany(() => VrResource, (vrResource) => vrResource.vrVideosAsAvatar, {
     onDelete: 'CASCADE',
+  })
+  @JoinTable({
+    name: 'vr_video_avatars',
+    joinColumn: {
+      name: 'vrVideoId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'vrResourceId',
+      referencedColumnName: 'id',
+    },
   })
   avatars: VrResource[];
 
