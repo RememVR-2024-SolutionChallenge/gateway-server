@@ -91,7 +91,7 @@ export class VrResourceController {
     summary: '완성된 VR 자원(배경, 아바타) 불러오기',
   })
   @ApiBearerAuth()
-  @ApiResponse({ type: [GetVrResourcesResponseDto] })
+  @ApiResponse({ type: GetVrResourcesResponseDto })
   @UseGuards(JwtAuthGuard, InitEnrollGuard)
   @Get('/')
   async getVrResources(
