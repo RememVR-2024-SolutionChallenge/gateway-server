@@ -12,9 +12,10 @@ export class VrVideoRepository extends Repository<VrVideo> {
     super(repository.target, repository.manager);
   }
 
-  async findByGroupId(groupId: string): Promise<VrVideo[]> {
+  async findByGroupIdWithResources(groupId: string): Promise<VrVideo[]> {
     return this.repository.find({
       where: { group: { id: groupId } },
+      relations: ['scene', 'avatars'],
     });
   }
 }

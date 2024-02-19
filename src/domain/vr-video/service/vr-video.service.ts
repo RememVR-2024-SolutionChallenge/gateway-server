@@ -8,15 +8,50 @@ import { createHash } from 'crypto';
 import { VrResourceRepository } from 'src/domain/vr-resource/repository/vr-resource.repository';
 import { ObjectDataType } from '../type/object-data.type';
 import { VrVideoRepository } from '../repository/vr-video.repository';
+import { GroupService } from 'src/domain/group/group.service';
+import { GetVrVideosResponseDto } from '../dto/response/get-vr-videos.response.dto';
+import { VrResourceDto } from 'src/domain/vr-resource/dto/response/get-vr-resources.response.dto';
+import { VrResourceStorageRepository } from 'src/common/gcp/cloud-storage/vr-resource-storage.repository';
 
 @Injectable()
 export class VrVideoService {
   constructor(
+    private readonly groupService: GroupService,
     private readonly groupRepository: GroupRepository,
     private readonly vrVideoStorageRepository: VrVideoStorageRepository,
+    private readonly vrResourceStorageRepository: VrResourceStorageRepository,
     private readonly vrResourceRepository: VrResourceRepository,
     private readonly vrVideoRepository: VrVideoRepository,
   ) {}
+
+  async getVrVideos(user: User): Promise<GetVrVideosResponseDto[]> {
+    const groupId = (await this.groupService.getMyGroup(user)).id;
+    const vrVideos = await this.vrVideoRepository.findByGroupIdWithResources(
+      groupId,
+    );
+
+    return await Promise.all(
+      vrVideos.map(async (vrVideo) => {
+        const sceneDto = VrResourceDto.of(
+          vrVideo.scene,
+          await this.vrResourceStorageRepository.generateSignedUrlList(
+            vrVideo.scene.filePath,
+          ),
+        );
+        const avatarDtos = await Promise.all(
+          vrVideo.avatars.map(async (avatar) => {
+            return VrResourceDto.of(
+              avatar,
+              await this.vrResourceStorageRepository.generateSignedUrlList(
+                avatar.filePath,
+              ),
+            );
+          }),
+        );
+        return new GetVrVideosResponseDto(vrVideo, sceneDto, avatarDtos);
+      }),
+    );
+  }
 
   async generateVrVideo(
     user: User,
