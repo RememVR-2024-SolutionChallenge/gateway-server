@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { GenerateVrVideoRequestDto } from '../dto/request/generate-vr-video.request.dto';
 import { User } from 'src/domain/user/entity/user.entity';
 import { GroupRepository } from 'src/domain/group/repository/group.repository';
@@ -12,6 +12,7 @@ import { GroupService } from 'src/domain/group/group.service';
 import { GetVrVideosResponseDto } from '../dto/response/get-vr-videos.response.dto';
 import { VrResourceDto } from 'src/domain/vr-resource/dto/response/get-vr-resources.response.dto';
 import { VrResourceStorageRepository } from 'src/common/gcp/cloud-storage/vr-resource-storage.repository';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class VrVideoService {
@@ -60,14 +61,11 @@ export class VrVideoService {
     const group = await this.groupRepository.findByCareGiverId(user.id);
     const { title, sceneInfo, avatarsInfo } = requestDto;
 
-    // Save to main DB.
-    const vrVideo = new VrVideo();
-    vrVideo.id = this.generateVrVideoId(user.id);
-    vrVideo.title = title;
-    vrVideo.scene = await this.vrResourceRepository.findById(
+    // Get VR Resource From DB.
+    const scene = await this.vrResourceRepository.findById(
       sceneInfo.resourceId,
     );
-    vrVideo.avatars = await Promise.all(
+    const avatars = await Promise.all(
       avatarsInfo.map(async (avatarInfo) => {
         const avatar = await this.vrResourceRepository.findById(
           avatarInfo.resourceId,
@@ -75,6 +73,16 @@ export class VrVideoService {
         return avatar;
       }),
     );
+    if (!scene || avatars.some((avatar) => !avatar)) {
+      throw new NotFoundException('Resource not found');
+    }
+
+    // Save VR Video to main DB.
+    const vrVideo = new VrVideo();
+    vrVideo.id = this.generateVrVideoId(user.id);
+    vrVideo.title = title;
+    vrVideo.scene = scene;
+    vrVideo.avatars = avatars;
     vrVideo.group = group;
     await this.vrVideoRepository.save(vrVideo);
 
