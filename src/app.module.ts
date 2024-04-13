@@ -15,6 +15,7 @@ import { Badge } from './domain/badge/entity/badge.entity';
 import { VrResource } from './domain/vr-resource/entity/vr-resource.entity';
 import { VrVideo } from './domain/vr-video/entity/vr-video.entity';
 import { VrVideoModule } from './domain/vr-video/vr-video.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -63,7 +64,7 @@ import { VrVideoModule } from './domain/vr-video/vr-video.module';
     GcpModule,
     GroupModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}
