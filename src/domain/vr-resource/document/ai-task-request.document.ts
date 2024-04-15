@@ -17,11 +17,11 @@ export interface AiTaskRequest {
   // 현재 작업 상태
   status: 'pending' | 'processing' | 'completed' | 'failed';
 
-  // 인풋 비디오의 위치
-  videoPath: string;
+  // 몸통 사진의 위치
+  bodyImagePath: string;
 
-  // 인풋 이미지의 위치
-  imagePath?: string;
+  // 얼굴 사진의 위치
+  faceImagePath?: string;
 
   // 아바타 성별
   gender?: 'male' | 'female' | 'neutral';

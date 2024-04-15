@@ -48,7 +48,7 @@ export class VrResourceController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: GenerateSceneRequestDto })
   @UseGuards(JwtAuthGuard, InitEnrollGuard, CareGiverGuard)
-  @Post('/source/scene')
+  @Post('/scene')
   @UseInterceptors(FileInterceptor('video'))
   async generateScene(
     @UploadedFile() video: Express.Multer.File,
@@ -66,7 +66,7 @@ export class VrResourceController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: GenerateAvatarRequestDto })
   @UseGuards(JwtAuthGuard, InitEnrollGuard, CareGiverGuard)
-  @Post('/source/avatar')
+  @Post('/avatar')
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'video', maxCount: 1 },
@@ -75,14 +75,14 @@ export class VrResourceController {
   )
   async generateAvatar(
     @UploadedFiles()
-    files: { video: Express.Multer.File[]; image: Express.Multer.File[] },
+    files: { face: Express.Multer.File[]; body: Express.Multer.File[] },
     @Body() requestDto: GenerateAvatarRequestDto,
     @AuthUser() user: User,
   ) {
     return this.vrResourceQueueService.generateAvatar(
       requestDto,
-      files.video[0],
-      files.image[0],
+      files.face[0],
+      files.body[0],
       user,
     );
   }

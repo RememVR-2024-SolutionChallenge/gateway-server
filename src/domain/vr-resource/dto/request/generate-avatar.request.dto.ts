@@ -4,10 +4,10 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 export class GenerateAvatarRequestDto {
   @ApiProperty({ type: 'string', format: 'binary' })
-  video: Express.Multer.File;
+  body: Express.Multer.File;
 
   @ApiProperty({ type: 'string', format: 'binary' })
-  image: Express.Multer.File;
+  face: Express.Multer.File;
 
   @ApiProperty({ description: '제목', example: '아들' })
   @IsString()
