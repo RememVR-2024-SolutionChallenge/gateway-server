@@ -1,23 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { GenerateAvatarRequestDto } from 'src/domain/vr-resource/dto/request/generate-avatar.request.dto';
 
-export class SampleGenerateAvatarRequestDto {
-  @ApiProperty({ type: 'string', format: 'binary' })
-  body: Express.Multer.File;
-
-  @ApiProperty({ type: 'string', format: 'binary' })
-  face: Express.Multer.File;
-
-  @ApiProperty({ description: '제목', example: '아들' })
+export class SampleGenerateAvatarRequestDto extends GenerateAvatarRequestDto {
+  @ApiProperty({ description: 'admin임을 인증하는 키', example: 'key' })
   @IsString()
   @IsNotEmpty()
-  title: string;
-
-  @ApiProperty({
-    description: '성별',
-    enum: ['female', 'male', 'neutral'],
-  })
-  @IsString()
-  @IsNotEmpty()
-  gender: 'female' | 'male' | 'neutral';
+  key: string;
 }

@@ -1,20 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { GenerateSceneRequestDto } from 'src/domain/vr-resource/dto/request/generate-scene.request.dto';
 
-export class GenerateSceneRequestDto {
-  @ApiProperty({ type: 'string', format: 'binary' })
-  video: Express.Multer.File;
-
-  @ApiProperty({ description: '제목', example: '고향집' })
+export class SampleGenerateSceneRequestDto extends GenerateSceneRequestDto {
+  @ApiProperty({ description: 'admin임을 인증하는 키', example: 'key' })
   @IsString()
   @IsNotEmpty()
-  title: string;
-
-  @ApiProperty({
-    description: '장소',
-    enum: ['indoor', 'outdoor', 'unbound'],
-  })
-  @IsString()
-  @IsNotEmpty()
-  location: 'indoor' | 'outdoor' | 'unbound';
+  key: string;
 }
