@@ -29,8 +29,8 @@ export class VrResourceQueueService {
     const requestId = this.generateRequestId(user.id);
 
     // 1. Store face source to GCP Cloud Storage.
-    const bodyFilePath = `3dgs-request/scene/${requestId}/face`;
-    await this.vrResourceStorageRepository.uploadFile(face, bodyFilePath);
+    const bodyImagePath = `3dgs-request/scene/${requestId}/face`;
+    await this.vrResourceStorageRepository.uploadFile(face, bodyImagePath);
 
     // 2. Store request data to Firestore.
     const task: AiTaskRequest = {
@@ -39,7 +39,7 @@ export class VrResourceQueueService {
       type: 'scene',
       status: 'pending',
       location: location,
-      bodyFilePath: bodyFilePath,
+      bodyImagePath: bodyImagePath,
       groupId: (await this.groupService.getMyGroup(user)).id,
       creatorId: user.id,
       createdAt: new Date(),
@@ -66,8 +66,8 @@ export class VrResourceQueueService {
     // 1. Store file source to GCP Cloud Storage.
     const faceFilePath = `3dgs-request/avatar/${requestId}/body`;
     await this.vrResourceStorageRepository.uploadFile(body, faceFilePath);
-    const bodyFilePath = `3dgs-request/avatar/${requestId}/face`;
-    await this.vrResourceStorageRepository.uploadFile(face, bodyFilePath);
+    const bodyImagePath = `3dgs-request/avatar/${requestId}/face`;
+    await this.vrResourceStorageRepository.uploadFile(face, bodyImagePath);
 
     // 2. Store request data to Firestore.
     const task: AiTaskRequest = {
@@ -76,7 +76,7 @@ export class VrResourceQueueService {
       type: 'avatar',
       status: 'pending',
       gender: gender,
-      bodyImagePath: bodyFilePath,
+      bodyImagePath: bodyImagePath,
       faceImagePath: faceFilePath,
       groupId: (await this.groupService.getMyGroup(user)).id,
       creatorId: user.id,
