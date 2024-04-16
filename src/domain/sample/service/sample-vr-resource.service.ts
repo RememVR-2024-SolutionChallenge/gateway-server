@@ -9,12 +9,18 @@ import { SampleGenerateAvatarRequestDto } from '../dto/request/sample-generate-a
 
 // NOTE: sample uses the same queue with normal request
 import { AiTaskQueueRepository } from '../../vr-resource/repository/ai-task-queue.repository';
+import { SampleVrResourceDto } from '../dto/response/sample-get-vr-resources.response.dto';
+import { SampleVrResourceRepository } from '../repository/sample-vr-resource.repository';
 
 @Injectable()
 export class SampleVrResourceService {
   constructor(
-    private readonly vrResourceStorageRepository: VrResourceStorageRepository,
+    // sample has difference in database entity.
+    private readonly vrResourceRepository: SampleVrResourceRepository,
     private readonly aiTaskRequestRepository: SampleAiTaskRequestRepository,
+
+    // but, shared queue, storage, etc...
+    private readonly vrResourceStorageRepository: VrResourceStorageRepository,
     private readonly aiTaskQueueRepository: AiTaskQueueRepository,
     private readonly cloudFunctionsRepository: CloudFunctionsRepository,
   ) {}
@@ -91,21 +97,20 @@ export class SampleVrResourceService {
     return;
   }
 
-  // TODO: should be change for sample.
-  // async getVrResources(user: User): Promise<VrResourceDto[]> {
-  //   const vrResources = await this.vrResourceRepository.findByGroupId(groupId);
-  //   const vrResourceDtos = await Promise.all(
-  //     vrResources.map(async (vrResource) => {
-  //       const storageUrls =
-  //         await this.vrResourceStorageRepository.generateSignedUrlList(
-  //           vrResource.filePath,
-  //         );
-  //       return VrResourceDto.of(vrResource, storageUrls);
-  //     }),
-  //   );
+  async getVrResources(): Promise<SampleVrResourceDto[]> {
+    const vrResources = await this.vrResourceRepository.find();
+    const vrResourceDtos = await Promise.all(
+      vrResources.map(async (vrResource) => {
+        const storageUrls =
+          await this.vrResourceStorageRepository.generateSignedUrlList(
+            vrResource.filePath,
+          );
+        return SampleVrResourceDto.of(vrResource, storageUrls);
+      }),
+    );
 
-  //   return vrResourceDtos;
-  // }
+    return vrResourceDtos;
+  }
 
   private generateRequestId(): string {
     const currentTime = Date.now().toString();
