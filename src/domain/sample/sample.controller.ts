@@ -18,7 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { SampleVrResourceService } from './service/sample-vr-resource.service';
-import { SampleGenerateSceneRequestDto } from './dto/request/sample-generate-scene-request.dto';
+import { SampleGenerateSceneRequestDto } from './dto/request/sample-generate-scene.request.dto';
 import {
   FileFieldsInterceptor,
   FileInterceptor,
