@@ -16,6 +16,7 @@ import { VrResource } from './domain/vr-resource/entity/vr-resource.entity';
 import { VrVideo } from './domain/vr-video/entity/vr-video.entity';
 import { VrVideoModule } from './domain/vr-video/vr-video.module';
 import { AppController } from './app.controller';
+import { SampleModule } from './domain/sample/sample.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { AppController } from './app.controller';
     EmailModule,
     VrResourceModule,
     VrVideoModule,
+    SampleModule,
     GcpModule,
     GroupModule,
   ],
