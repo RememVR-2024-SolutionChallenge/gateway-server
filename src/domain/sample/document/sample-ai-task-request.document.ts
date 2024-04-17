@@ -1,12 +1,9 @@
-export interface AiTaskRequest {
+// ! This is firestore document
+// ! This includes infomation about VR generating request.
+
+export interface SampleAiTaskRequest {
   /** 요청 아이디 */
   id: string;
-
-  /** 그룹(환자) 아이디 */
-  groupId: string;
-
-  /** 생성자 아이디 */
-  creatorId: string;
 
   /** 제목 */
   title: string;
@@ -43,4 +40,11 @@ export interface AiTaskRequest {
 
   /** 배경 비디오 */
   sceneVideoPath?: string;
+
+  /* ------------------------------- deprecated ------------------------------- */
+  // // /** 그룹(환자) 아이디 */
+  // // groupId: string;
+
+  // // /** 생성자 아이디 */
+  // // creatorId: string;
 }

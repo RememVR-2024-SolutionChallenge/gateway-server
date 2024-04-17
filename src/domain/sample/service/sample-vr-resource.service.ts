@@ -1,47 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import { createHash } from 'crypto';
 import { VrResourceStorageRepository } from 'src/common/gcp/cloud-storage/vr-resource-storage.repository';
-import { AiTaskRequestRepository } from '../repository/ai-task-request.repository';
-import { AiTaskRequest } from '../document/ai-task-request.document';
-import { GroupService } from 'src/domain/group/group.service';
-import { User } from 'src/domain/user/entity/user.entity';
-import { AiTaskQueueRepository } from '../repository/ai-task-queue.repository';
+import { SampleAiTaskRequestRepository } from '../repository/sample-ai-task-request.repository';
+import { SampleAiTaskRequest } from '../document/sample-ai-task-request.document';
 import { CloudFunctionsRepository } from 'src/common/gcp/cloud-functions/cloud-functions.repository';
-import { GenerateSceneRequestDto } from '../dto/request/generate-scene.request.dto';
-import { GenerateAvatarRequestDto } from '../dto/request/generate-avatar.request.dto';
+import { SampleGenerateSceneRequestDto } from '../dto/request/sample-generate-scene.request.dto';
+import { SampleGenerateAvatarRequestDto } from '../dto/request/sample-generate-avatar.request.dto';
+
+// NOTE: sample uses the same queue with normal request
+import { AiTaskQueueRepository } from '../../vr-resource/repository/ai-task-queue.repository';
+import { SampleVrResourceDto } from '../dto/response/sample-get-vr-resources.response.dto';
+import { SampleVrResourceRepository } from '../repository/sample-vr-resource.repository';
 
 @Injectable()
-export class VrResourceQueueService {
+export class SampleVrResourceService {
   constructor(
+    // sample has difference in database entity.
+    private readonly vrResourceRepository: SampleVrResourceRepository,
+    private readonly aiTaskRequestRepository: SampleAiTaskRequestRepository,
+
+    // but, shared queue, storage, etc...
     private readonly vrResourceStorageRepository: VrResourceStorageRepository,
-    private readonly aiTaskRequestRepository: AiTaskRequestRepository,
-    private readonly groupService: GroupService,
     private readonly aiTaskQueueRepository: AiTaskQueueRepository,
     private readonly cloudFunctionsRepository: CloudFunctionsRepository,
   ) {}
 
   async generateScene(
-    requestDto: GenerateSceneRequestDto,
+    requestDto: SampleGenerateSceneRequestDto,
     face: Express.Multer.File,
-    user: User,
   ): Promise<void> {
     const { title, location } = requestDto;
-    const requestId = this.generateRequestId(user.id);
+    const requestId = this.generateRequestId();
 
     // 1. Store face source to GCP Cloud Storage.
     const sceneVideoPath = `3dgs-request/scene/${requestId}/face`;
     await this.vrResourceStorageRepository.uploadFile(face, sceneVideoPath);
 
     // 2. Store request data to Firestore.
-    const task: AiTaskRequest = {
+    const task: SampleAiTaskRequest = {
       // necessary
       id: requestId,
-      groupId: (await this.groupService.getMyGroup(user)).id,
-      creatorId: user.id,
       title: title,
       status: 'pending',
       createdAt: new Date(),
-      isSample: false,
+      isSample: true,
       // scene
       type: 'scene',
       location: location,
@@ -58,13 +60,12 @@ export class VrResourceQueueService {
   }
 
   async generateAvatar(
-    requestDto: GenerateAvatarRequestDto,
+    requestDto: SampleGenerateAvatarRequestDto,
     face: Express.Multer.File,
     body: Express.Multer.File,
-    user: User,
   ): Promise<void> {
     const { title, gender } = requestDto;
-    const requestId = this.generateRequestId(user.id);
+    const requestId = this.generateRequestId();
 
     // 1. Store file source to GCP Cloud Storage.
     const faceFilePath = `3dgs-request/avatar/${requestId}/body`;
@@ -73,15 +74,13 @@ export class VrResourceQueueService {
     await this.vrResourceStorageRepository.uploadFile(face, bodyImagePath);
 
     // 2. Store request data to Firestore.
-    const task: AiTaskRequest = {
+    const task: SampleAiTaskRequest = {
       // necessary
       id: requestId,
-      groupId: (await this.groupService.getMyGroup(user)).id,
-      creatorId: user.id,
       title: title,
       status: 'pending',
       createdAt: new Date(),
-      isSample: false,
+      isSample: true,
       // avatar
       type: 'avatar',
       bodyImagePath: bodyImagePath,
@@ -98,16 +97,24 @@ export class VrResourceQueueService {
     return;
   }
 
-  async getAiTaskQueue(user: User): Promise<AiTaskRequest[]> {
-    // userId로 그룹Id 알아내기
-    const groupId = (await this.groupService.getMyGroup(user)).id;
-    // 그룹Id를 기반으로 FireStore에서 완성되지 않은 요청 받아오기
-    return await this.aiTaskRequestRepository.getQueuedTasksByGroupId(groupId);
+  async getVrResources(): Promise<SampleVrResourceDto[]> {
+    const vrResources = await this.vrResourceRepository.find();
+    const vrResourceDtos = await Promise.all(
+      vrResources.map(async (vrResource) => {
+        const storageUrls =
+          await this.vrResourceStorageRepository.generateSignedUrlList(
+            vrResource.filePath,
+          );
+        return SampleVrResourceDto.of(vrResource, storageUrls);
+      }),
+    );
+
+    return vrResourceDtos;
   }
 
-  private generateRequestId(userId: string): string {
+  private generateRequestId(): string {
     const currentTime = Date.now().toString();
-    const data = `${currentTime}-${userId}`;
+    const data = `${currentTime}`;
     const hash = createHash('sha256').update(data).digest('hex');
     return hash;
   }

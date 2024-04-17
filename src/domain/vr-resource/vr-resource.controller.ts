@@ -69,8 +69,8 @@ export class VrResourceController {
   @Post('/avatar')
   @UseInterceptors(
     FileFieldsInterceptor([
-      { name: 'video', maxCount: 1 },
-      { name: 'image', maxCount: 1 },
+      { name: 'body', maxCount: 1 },
+      { name: 'face', maxCount: 1 },
     ]),
   )
   async generateAvatar(
