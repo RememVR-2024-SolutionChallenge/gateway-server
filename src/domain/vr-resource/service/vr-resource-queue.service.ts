@@ -41,7 +41,6 @@ export class VrResourceQueueService {
       title: title,
       status: 'pending',
       createdAt: new Date(),
-      isSample: false,
       // scene
       type: 'scene',
       location: location,
@@ -81,7 +80,6 @@ export class VrResourceQueueService {
       title: title,
       status: 'pending',
       createdAt: new Date(),
-      isSample: false,
       // avatar
       type: 'avatar',
       bodyImagePath: bodyImagePath,

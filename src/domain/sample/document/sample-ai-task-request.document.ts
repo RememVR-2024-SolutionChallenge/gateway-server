@@ -14,9 +14,6 @@ export interface SampleAiTaskRequest {
   /** 현재 작업 상태 */
   status: 'pending' | 'processing' | 'completed' | 'failed';
 
-  /** 샘플 여부 */
-  isSample: boolean;
-
   /* ----------------------------------- 기본값 ---------------------------------- */
 
   /** 작업 타입 */

@@ -43,7 +43,6 @@ export class SampleVrResourceService {
       title: title,
       status: 'pending',
       createdAt: new Date(),
-      isSample: true,
       // scene
       type: 'scene',
       location: location,
@@ -80,7 +79,6 @@ export class SampleVrResourceService {
       title: title,
       status: 'pending',
       createdAt: new Date(),
-      isSample: true,
       // avatar
       type: 'avatar',
       bodyImagePath: bodyImagePath,
