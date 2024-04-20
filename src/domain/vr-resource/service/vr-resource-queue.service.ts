@@ -22,15 +22,15 @@ export class VrResourceQueueService {
 
   async generateScene(
     requestDto: GenerateSceneRequestDto,
-    face: Express.Multer.File,
+    video: Express.Multer.File,
     user: User,
   ): Promise<void> {
     const { title, location } = requestDto;
     const requestId = this.generateRequestId(user.id);
 
-    // 1. Store face source to GCP Cloud Storage.
-    const sceneVideoPath = `3dgs-request/scene/${requestId}/face`;
-    await this.vrResourceStorageRepository.uploadFile(face, sceneVideoPath);
+    // 1. Store video source to GCP Cloud Storage.
+    const sceneVideoPath = `3dgs-request/scene/${requestId}/video`;
+    await this.vrResourceStorageRepository.uploadFile(video, sceneVideoPath);
 
     // 2. Store request data to Firestore.
     const task: AiTaskRequest = {

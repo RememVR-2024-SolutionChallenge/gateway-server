@@ -27,14 +27,14 @@ export class SampleVrResourceService {
 
   async generateScene(
     requestDto: SampleGenerateSceneRequestDto,
-    face: Express.Multer.File,
+    video: Express.Multer.File,
   ): Promise<void> {
     const { title, location } = requestDto;
     const requestId = this.generateRequestId();
 
     // 1. Store face source to GCP Cloud Storage.
-    const sceneVideoPath = `3dgs-request/scene/${requestId}/face`;
-    await this.vrResourceStorageRepository.uploadFile(face, sceneVideoPath);
+    const sceneVideoPath = `3dgs-request/scene/${requestId}/video`;
+    await this.vrResourceStorageRepository.uploadFile(video, sceneVideoPath);
 
     // 2. Store request data to Firestore.
     const task: SampleAiTaskRequest = {
