@@ -7,6 +7,7 @@ import { AiTaskQueueRepository } from '../vr-resource/repository/ai-task-queue.r
 import { SampleVrResourceService } from './service/sample-vr-resource.service';
 import { SampleVrResourceRepository } from './repository/sample-vr-resource.repository';
 import { SampleVrResource } from './entity/sample-vr-resource.entity';
+import { RequestInfoRepository } from './repository/request-info.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([SampleVrResource]), GcpModule],
@@ -16,6 +17,7 @@ import { SampleVrResource } from './entity/sample-vr-resource.entity';
     AiTaskQueueRepository,
     SampleVrResourceService,
     SampleVrResourceRepository,
+    RequestInfoRepository,
   ],
 })
 export class SampleModule {}

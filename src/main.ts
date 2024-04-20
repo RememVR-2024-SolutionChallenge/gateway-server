@@ -2,9 +2,17 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Cors
+  app.enableCors();
+
+  // HTTP Limit
+  app.use(bodyParser.json({ limit: '3gb' }));
+  app.use(bodyParser.urlencoded({ limit: '3gb', extended: true }));
 
   // Swagger
   const document_config = new DocumentBuilder()
@@ -18,9 +26,6 @@ async function bootstrap() {
 
   // Class Validator
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-
-  // Cors
-  app.enableCors();
 
   await app.listen(3000);
 }

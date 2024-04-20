@@ -12,6 +12,7 @@ import { AiTaskQueueRepository } from './repository/ai-task-queue.repository';
 import { VrResourceService } from './service/vr-resource.service';
 import { VrResourceRepository } from './repository/vr-resource.repository';
 import { VrResource } from './entity/vr-resource.entity';
+import { RequestInfoRepository } from '../sample/repository/request-info.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Group, User, VrResource]), GcpModule],
@@ -24,6 +25,7 @@ import { VrResource } from './entity/vr-resource.entity';
     AiTaskQueueRepository,
     VrResourceService,
     VrResourceRepository,
+    RequestInfoRepository,
   ],
 })
 export class VrResourceModule {}
