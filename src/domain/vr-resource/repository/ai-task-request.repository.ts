@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Firestore } from '@google-cloud/firestore';
 import { ConfigService } from '@nestjs/config';
-import { AiTaskRequest } from '../document/ai-task-request.document';
+import { AiTaskRequest } from '../../sample/document/ai-task-request.document';
 import { RequestInfoRepository } from 'src/domain/sample/repository/request-info.repository';
 
 @Injectable()

@@ -6,9 +6,9 @@ import { AuthController } from './auth.controller';
 import { User } from 'src/domain/user/entity/user.entity';
 import { GoogleStrategy } from './strategy/google.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { UserRepository } from 'src/domain/user/repository/user.repository';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -21,8 +21,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
     }),
     ConfigModule,
+    UserModule,
   ],
   controllers: [AuthController],
-  providers: [GoogleStrategy, JwtStrategy, AuthService, UserRepository],
+  providers: [GoogleStrategy, JwtStrategy, AuthService],
 })
 export class AuthModule {}

@@ -11,19 +11,17 @@ import { VrResource } from '../vr-resource/entity/vr-resource.entity';
 import { VrVideoService } from './service/vr-video.service';
 import { VrResourceRepository } from '../vr-resource/repository/vr-resource.repository';
 import { VrVideoRepository } from './repository/vr-video.repository';
+import { GroupModule } from '../group/group.module';
+import { VrResourceModule } from '../vr-resource/vr-resource.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Group, User, VrVideo, VrResource]),
     GcpModule,
+    GroupModule,
+    VrResourceModule,
   ],
   controllers: [VrVideoController],
-  providers: [
-    VrVideoService,
-    GroupService,
-    GroupRepository,
-    VrResourceRepository,
-    VrVideoRepository,
-  ],
+  providers: [VrVideoService, VrVideoRepository],
 })
 export class VrVideoModule {}
