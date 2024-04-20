@@ -13,9 +13,14 @@ import { VrResourceService } from './service/vr-resource.service';
 import { VrResourceRepository } from './repository/vr-resource.repository';
 import { VrResource } from './entity/vr-resource.entity';
 import { RequestInfoRepository } from '../sample/repository/request-info.repository';
+import { SampleModule } from '../sample/sample.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Group, User, VrResource]), GcpModule],
+  imports: [
+    TypeOrmModule.forFeature([Group, User, VrResource]),
+    GcpModule,
+    SampleModule,
+  ],
   controllers: [VrResourceController],
   providers: [
     VrResourceQueueService,

@@ -31,6 +31,7 @@ import { GetAiTaskQueueResponseDto } from './dto/response/get-ai-task-queue.resp
 import { VrResourceService } from './service/vr-resource.service';
 import { GetVrResourcesResponseDto } from './dto/response/get-vr-resources.response.dto';
 import { GenerateAvatarRequestDto } from './dto/request/generate-avatar.request.dto';
+import { SampleVrResourceService } from '../sample/service/sample-vr-resource.service';
 
 @ApiTags('VR-resource')
 @Controller('vr-resource')
@@ -38,6 +39,7 @@ export class VrResourceController {
   constructor(
     private readonly vrResourceQueueService: VrResourceQueueService,
     private readonly vrResourceService: VrResourceService,
+    private readonly sampleVrResourceService: SampleVrResourceService,
   ) {}
 
   @ApiOperation({
@@ -88,7 +90,7 @@ export class VrResourceController {
   }
 
   @ApiOperation({
-    summary: '완성된 VR 자원(배경, 아바타) 불러오기',
+    summary: '완성된 VR 자원 불러오기 (샘플 포함)',
   })
   @ApiBearerAuth()
   @ApiResponse({ type: GetVrResourcesResponseDto })
@@ -98,7 +100,9 @@ export class VrResourceController {
     @AuthUser() user: User,
   ): Promise<GetVrResourcesResponseDto> {
     const vrResourceDtos = await this.vrResourceService.getVrResources(user);
-    return new GetVrResourcesResponseDto(vrResourceDtos);
+    const sampleVrResourceDtos =
+      await this.sampleVrResourceService.getVrResources();
+    return new GetVrResourcesResponseDto(vrResourceDtos, sampleVrResourceDtos);
   }
 
   @ApiOperation({

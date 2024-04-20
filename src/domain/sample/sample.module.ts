@@ -19,5 +19,6 @@ import { RequestInfoRepository } from './repository/request-info.repository';
     SampleVrResourceRepository,
     RequestInfoRepository,
   ],
+  exports: [SampleVrResourceService],
 })
 export class SampleModule {}
