@@ -2,13 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { Firestore } from '@google-cloud/firestore';
 import { ConfigService } from '@nestjs/config';
 import { SampleAiTaskRequest } from '../document/sample-ai-task-request.document';
+import { RequestInfoRepository } from './request-info.repository';
 
 @Injectable()
 export class SampleAiTaskRequestRepository {
   private firestore: Firestore;
   private collectionPath: string;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private requestInfoRepository: RequestInfoRepository,
+  ) {
     this.firestore = new Firestore({
       projectId: this.configService.get<string>('GCP_PROJECT'),
       keyFilename: this.configService.get<string>('GCP_KEY_FILE'),
@@ -21,6 +25,11 @@ export class SampleAiTaskRequestRepository {
       .collection(this.collectionPath)
       .doc(documentId);
     await documentRef.set(data);
+
+    this.requestInfoRepository.addInfo(documentId, {
+      id: documentId,
+      isSample: true,
+    });
   }
 
   // Not used in sample.
