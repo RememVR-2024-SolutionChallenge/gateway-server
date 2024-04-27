@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -19,6 +19,11 @@ import { GetVrVideosResponseDto } from './dto/response/get-vr-videos.response.dt
 export class VrVideoController {
   constructor(private readonly vrVideoService: VrVideoService) {}
 
+  /**
+   *
+   * @param user userID
+   * @param requestDto scene 1, avatars 1~10
+   */
   @ApiOperation({ summary: 'VR 비디오 생성 요청' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, InitEnrollGuard, CareGiverGuard)
@@ -37,5 +42,18 @@ export class VrVideoController {
   @Get('/')
   async getVrVideos(@AuthUser() user: User): Promise<GetVrVideosResponseDto[]> {
     return await this.vrVideoService.getVrVideos(user);
+  }
+
+  // 특정 VR 비디오 id를 통해서 특정한 VR비디오 정보를 불러오는 API를 작성할것.
+  @ApiOperation({ summary: 'VR 비디오 정보 불러오기' })
+  @ApiBearerAuth()
+  @ApiResponse({ type: GetVrVideosResponseDto })
+  @UseGuards(JwtAuthGuard, InitEnrollGuard)
+  @Get('/:id')
+  async getVrVideo(
+    @AuthUser() user: User,
+    @Param('id') videoId: string,
+  ): Promise<GetVrVideosResponseDto> {
+    return await this.vrVideoService.getVrVideo(user, videoId);
   }
 }

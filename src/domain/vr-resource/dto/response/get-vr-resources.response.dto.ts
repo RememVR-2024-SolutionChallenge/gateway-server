@@ -9,7 +9,8 @@ export class VrResourceDto extends PickType(VrResource, [
   'createdAt',
 ] as const) {
   @ApiProperty({
-    description: '인증된 storage URL (10분 간 유효)',
+    description:
+      '인증된 storage URL (10분 간 유효), file이 여러 chunk로 나눠져있음.',
     example: [
       'https://storage.googleapis.com/...',
       'https://storage.googleapis.com/...',

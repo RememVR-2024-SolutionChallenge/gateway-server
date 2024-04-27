@@ -12,6 +12,30 @@ export class GroupRepository extends Repository<Group> {
     super(repository.target, repository.manager);
   }
 
+  async isUserInGroup(userId: string, groupId: string): Promise<boolean> {
+    // 1. is the user careRecipient?
+    const isCareRecipient =
+      (
+        await this.findOne({
+          where: { recipient: { id: userId } },
+        })
+      )?.id === groupId
+        ? true
+        : false;
+
+    // 2. is the user careGiver?
+    const isCareGiver =
+      (
+        await this.findOne({
+          where: { givers: { id: userId } },
+        })
+      )?.id === groupId
+        ? true
+        : false;
+
+    return isCareRecipient || isCareGiver ? true : false;
+  }
+
   async findByCareGiverIdWithUsers(giverId: string): Promise<Group> {
     return await this.findOne({
       where: { givers: { id: giverId } },

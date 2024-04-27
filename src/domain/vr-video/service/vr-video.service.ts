@@ -25,6 +25,52 @@ export class VrVideoService {
     private readonly vrVideoRepository: VrVideoRepository,
   ) {}
 
+  /**
+   * videoID를 통해 특정 video만 가져옴
+   * @param user UserID
+   * @param videoId videoID
+   */
+  async getVrVideo(
+    user: User,
+    videoId: string,
+  ): Promise<GetVrVideosResponseDto> {
+    const vrVideo = await this.vrVideoRepository.findById(videoId);
+    // 1. validation logic
+    if (!vrVideo) {
+      throw new NotFoundException('VrVideo not found');
+    }
+    const isUserInGroup = await this.groupRepository.isUserInGroup(
+      user.id,
+      vrVideo.group.id,
+    );
+    if (!isUserInGroup) {
+      throw new NotFoundException('User is not in the group');
+    }
+
+    // 2. return DTO from DB.
+    const sceneDto = VrResourceDto.of(
+      vrVideo.scene,
+      await this.vrResourceStorageRepository.generateSignedUrlList(
+        vrVideo.scene.filePath,
+      ),
+    );
+    const avatarDtos = await Promise.all(
+      vrVideo.avatars.map(async (avatar) => {
+        return VrResourceDto.of(
+          avatar,
+          await this.vrResourceStorageRepository.generateSignedUrlList(
+            avatar.filePath,
+          ),
+        );
+      }),
+    );
+    return new GetVrVideosResponseDto(vrVideo, sceneDto, avatarDtos);
+  }
+
+  /**
+   * @param user userID
+   * @returns {GetVrVideosResponseDto[]}
+   */
   async getVrVideos(user: User): Promise<GetVrVideosResponseDto[]> {
     const groupId = (await this.groupService.getMyGroup(user)).id;
     const vrVideos = await this.vrVideoRepository.findByGroupIdWithResources(
@@ -54,6 +100,14 @@ export class VrVideoService {
     );
   }
 
+  /**
+   * DB에는 관계정보(avatar, scene)를 저장하고,
+   * avatar의 id를 기반으로 cloud storage에 .json파일을 저장.
+   * (즉, DB에는 videoId는 존재하여도 cloud storage의 filePath는 존재하지 않음.)
+   * @param user userId
+   * @param requestDto GenerateVrVideoRequestDto
+   * @returns {void}
+   */
   async generateVrVideo(
     user: User,
     requestDto: GenerateVrVideoRequestDto,
@@ -86,7 +140,7 @@ export class VrVideoService {
     vrVideo.group = group;
     await this.vrVideoRepository.save(vrVideo);
 
-    // Save to Position Json file Cloud Storage.
+    // Save position in Json on Cloud Storage.
     await this.vrVideoStorageRepository.uploadFile(
       this.convertJsontoJsonFile(
         sceneInfo.objectData,
@@ -106,6 +160,8 @@ export class VrVideoService {
       }),
     );
   }
+
+  /* ---------------------------- utility functions --------------------------- */
 
   private convertJsontoJsonFile(
     json: ObjectDataType,
