@@ -1,20 +1,58 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { VrVideo } from '../../entity/vr-video.entity';
-import { VrResourceDto } from 'src/domain/vr-resource/dto/response/get-vr-resources.response.dto';
+import { VrResource } from 'src/domain/vr-resource/entity/vr-resource.entity';
+
+export class VrResourceDtoForVideo extends PickType(VrResource, [
+  'id',
+  'title',
+  'type',
+  'createdAt',
+] as const) {
+  // ! storageUrls: vr-resource(아바타) 파일
+  @ApiProperty({
+    description: 'vr-resource(아바타) 파일: storage URL (10분 간 유효)',
+    example: [
+      'https://storage.googleapis.com/...',
+      'https://storage.googleapis.com/...',
+    ],
+  })
+  storageUrls: string[];
+
+  @ApiProperty({
+    description: 'video내에서 리소스의 포지셔닝을 설명하는 파일의 storage URL',
+    example: 'https://storage.googleapis.com/...',
+  })
+  inVideoPositionFile: string;
+
+  static of(
+    vrResource: VrResource,
+    storageUrls: string[],
+    inVideoPositionFile: string,
+  ): VrResourceDtoForVideo {
+    return {
+      id: vrResource.id,
+      title: vrResource.title,
+      type: vrResource.type,
+      storageUrls: storageUrls,
+      inVideoPositionFile: inVideoPositionFile,
+      createdAt: vrResource.createdAt,
+    };
+  }
+}
 
 export class GetVrVideosResponseDto extends PickType(VrVideo, [
   'title',
 ] as const) {
-  @ApiProperty({ type: VrResourceDto })
-  scene: VrResourceDto;
+  @ApiProperty({ type: VrResourceDtoForVideo })
+  scene: VrResourceDtoForVideo;
 
-  @ApiProperty({ type: [VrResourceDto] })
-  avatars: VrResourceDto[];
+  @ApiProperty({ type: [VrResourceDtoForVideo] })
+  avatars: VrResourceDtoForVideo[];
 
   constructor(
     vrVideo: VrVideo,
-    scene: VrResourceDto,
-    avatars: VrResourceDto[],
+    scene: VrResourceDtoForVideo,
+    avatars: VrResourceDtoForVideo[],
   ) {
     super(vrVideo, ['title', 'scene', 'avatars']);
     this.scene = scene;
