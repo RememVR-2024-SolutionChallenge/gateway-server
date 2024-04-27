@@ -1,5 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { GenerateVrVideoRequestDto } from '../dto/request/generate-vr-video.request.dto';
+import {
+  GenerateVrVideoRequestDto,
+  VrResourceInfo,
+} from '../dto/request/generate-vr-video.request.dto';
 import { User } from 'src/domain/user/entity/user.entity';
 import { GroupRepository } from 'src/domain/group/repository/group.repository';
 import { VrVideoStorageRepository } from 'src/common/gcp/cloud-storage/vr-video-storage.repository';
@@ -9,10 +12,11 @@ import { VrResourceRepository } from 'src/domain/vr-resource/repository/vr-resou
 import { ObjectDataType } from '../type/object-data.type';
 import { VrVideoRepository } from '../repository/vr-video.repository';
 import { GroupService } from 'src/domain/group/group.service';
-import { GetVrVideosResponseDto } from '../dto/response/get-vr-videos.response.dto';
-import { VrResourceDto } from 'src/domain/vr-resource/dto/response/get-vr-resources.response.dto';
+import {
+  GetVrVideosResponseDto,
+  VrResourceDtoForVideo,
+} from '../dto/response/get-vr-videos.response.dto';
 import { VrResourceStorageRepository } from 'src/common/gcp/cloud-storage/vr-resource-storage.repository';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class VrVideoService {
@@ -24,6 +28,8 @@ export class VrVideoService {
     private readonly vrResourceRepository: VrResourceRepository,
     private readonly vrVideoRepository: VrVideoRepository,
   ) {}
+
+  /* ---------------------------- GET /vr-video/:id --------------------------- */
 
   /**
    * videoID를 통해 특정 video만 가져옴
@@ -48,24 +54,36 @@ export class VrVideoService {
     }
 
     // 2. return DTO from DB.
-    const sceneDto = VrResourceDto.of(
+    const sceneDto = VrResourceDtoForVideo.of(
       vrVideo.scene,
       await this.vrResourceStorageRepository.generateSignedUrlList(
         vrVideo.scene.filePath,
       ),
+      await this.getResourcePositionFileURL(
+        vrVideo.id,
+        vrVideo.scene.id,
+        'scene',
+      ),
     );
     const avatarDtos = await Promise.all(
       vrVideo.avatars.map(async (avatar) => {
-        return VrResourceDto.of(
+        return VrResourceDtoForVideo.of(
           avatar,
           await this.vrResourceStorageRepository.generateSignedUrlList(
             avatar.filePath,
+          ),
+          await this.getResourcePositionFileURL(
+            vrVideo.id,
+            avatar.id,
+            'avatar',
           ),
         );
       }),
     );
     return new GetVrVideosResponseDto(vrVideo, sceneDto, avatarDtos);
   }
+
+  /* ------------------------------ GET /vr-video ----------------------------- */
 
   /**
    * @param user userID
@@ -79,18 +97,28 @@ export class VrVideoService {
 
     return await Promise.all(
       vrVideos.map(async (vrVideo) => {
-        const sceneDto = VrResourceDto.of(
+        const sceneDto = VrResourceDtoForVideo.of(
           vrVideo.scene,
           await this.vrResourceStorageRepository.generateSignedUrlList(
             vrVideo.scene.filePath,
           ),
+          await this.getResourcePositionFileURL(
+            vrVideo.id,
+            vrVideo.scene.id,
+            'scene',
+          ),
         );
         const avatarDtos = await Promise.all(
           vrVideo.avatars.map(async (avatar) => {
-            return VrResourceDto.of(
+            return VrResourceDtoForVideo.of(
               avatar,
               await this.vrResourceStorageRepository.generateSignedUrlList(
                 avatar.filePath,
+              ),
+              await this.getResourcePositionFileURL(
+                vrVideo.id,
+                avatar.id,
+                'avatar',
               ),
             );
           }),
@@ -99,6 +127,8 @@ export class VrVideoService {
       }),
     );
   }
+
+  /* ----------------------------- POST /vr-video ----------------------------- */
 
   /**
    * DB에는 관계정보(avatar, scene)를 저장하고,
@@ -133,35 +163,24 @@ export class VrVideoService {
 
     // Save VR Video to main DB.
     const vrVideo = new VrVideo();
-    vrVideo.id = this.generateVrVideoId(user.id);
+    const vrVideoId = this.generateVrVideoId(user.id);
+    vrVideo.id = vrVideoId;
     vrVideo.title = title;
     vrVideo.scene = scene;
     vrVideo.avatars = avatars;
     vrVideo.group = group;
     await this.vrVideoRepository.save(vrVideo);
 
-    // Save position in Json on Cloud Storage.
-    await this.vrVideoStorageRepository.uploadFile(
-      this.convertJsontoJsonFile(
-        sceneInfo.objectData,
-        `${sceneInfo.resourceId}.json`,
-      ),
-      `${sceneInfo.resourceId}.json`,
-    );
-    await Promise.all(
-      avatarsInfo.map(async (avatarInfo) => {
-        await this.vrVideoStorageRepository.uploadFile(
-          this.convertJsontoJsonFile(
-            avatarInfo.objectData,
-            `${avatarInfo.resourceId}.json`,
-          ),
-          `${avatarInfo.resourceId}.json`,
-        );
-      }),
+    await this.uploadVideoPositionToCloudStorage(
+      vrVideoId,
+      sceneInfo,
+      avatarsInfo,
     );
   }
 
-  /* ---------------------------- utility functions --------------------------- */
+  /* -------------------------------------------------------------------------- */
+  /*                             utilitiy functions                             */
+  /* -------------------------------------------------------------------------- */
 
   private convertJsontoJsonFile(
     json: ObjectDataType,
@@ -180,5 +199,48 @@ export class VrVideoService {
     const data = `${currentTime}-${userId}`;
     const hash = createHash('sha256').update(data).digest('hex');
     return hash;
+  }
+
+  private async getResourcePositionFileURL(
+    vrVideoId: string,
+    resourceId: string,
+    type: 'scene' | 'avatar',
+  ): Promise<string> {
+    const signedUrl = await this.vrVideoStorageRepository.generateSignedUrl(
+      `vr-video/${vrVideoId}/${type}-${resourceId}.json`,
+    );
+    return signedUrl;
+  }
+
+  /**
+   * cloud storage에 scene과 avatar의 위치정보를 업로드
+   * @filepath `vr-video/${vrVideoId}/scene-${sceneInfo.resourceId}.json`
+   * @param vrVideoId
+   * @param sceneInfo
+   * @param avatarsInfo
+   */
+  private async uploadVideoPositionToCloudStorage(
+    vrVideoId: string,
+    sceneInfo: VrResourceInfo,
+    avatarsInfo: VrResourceInfo[],
+  ) {
+    await this.vrVideoStorageRepository.uploadFile(
+      this.convertJsontoJsonFile(
+        sceneInfo.objectData,
+        `${sceneInfo.resourceId}.json`,
+      ),
+      `vr-video/${vrVideoId}/scene-${sceneInfo.resourceId}.json`,
+    );
+    await Promise.all(
+      avatarsInfo.map(async (avatarInfo) => {
+        await this.vrVideoStorageRepository.uploadFile(
+          this.convertJsontoJsonFile(
+            avatarInfo.objectData,
+            `${avatarInfo.resourceId}.json`,
+          ),
+          `vr-video/${vrVideoId}/avatar-${avatarInfo.resourceId}.json`,
+        );
+      }),
+    );
   }
 }

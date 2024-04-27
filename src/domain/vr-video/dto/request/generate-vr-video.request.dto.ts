@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-class VrResourceInfo {
+export class VrResourceInfo {
   @ApiProperty({
     description: '리소스(아바타, 배경) ID',
     example: '123456789012',
