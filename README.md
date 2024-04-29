@@ -2,7 +2,7 @@
 
 This server operates as a **`traditional application server`**, but also serves as a **`gateway server for driving separate AI engine`**. As a gateway server, it queues requests to the AI server, and stores request data and resources. And also as an application server, it runs a query on a database, reprocesses the information, and provides it, according to the user's request.
 
-### 🤔 How To Run
+## 🤔 How To Run
 
 ```bash
 $ git clone https://github.com/RememVR-2024-SolutionChallenge/gateway-server.git
