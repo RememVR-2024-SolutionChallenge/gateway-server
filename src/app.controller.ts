@@ -2,7 +2,7 @@ import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 
-@ApiTags('Root')
+@ApiTags('Root (Health Check)')
 @Controller('/')
 export class AppController {
   private AI_SERVER_URL: string;
@@ -18,7 +18,7 @@ export class AppController {
   }
 
   @ApiOperation({ summary: 'AI 헬스체크' })
-  @Get('/')
+  @Get('/ai')
   async healthCheckAI(): Promise<{ message: string }> {
     const response = await fetch(`${this.AI_SERVER_URL}/`);
     if (response.status === 200) {
