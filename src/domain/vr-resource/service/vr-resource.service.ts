@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { GroupService } from 'src/domain/group/group.service';
+import { GroupService } from 'src/domain/group/service/group.service';
 import { VrResourceRepository } from '../repository/vr-resource.repository';
 import { User } from 'src/domain/user/entity/user.entity';
 import { VrResource } from '../entity/vr-resource.entity';

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { AiTaskRequest } from '../../../sample/document/ai-task-request.document';
+import { AiTaskRequest } from '../../../../common/gcp/firestore/document/ai-task-request.document';
 
 export class GetAiTaskQueueResponseDto {
   @ApiProperty({ description: '타입', example: 'scene' })

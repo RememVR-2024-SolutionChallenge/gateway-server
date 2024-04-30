@@ -10,7 +10,7 @@ import { AuthUser } from '../../common/auth/decorator/auth-user.decorator';
 import { User } from '../user/entity/user.entity';
 import { InitEnrollGuard } from 'src/common/auth/guard/init-enroll.guard';
 import { CareRecipientGuard } from 'src/common/auth/guard/role.guard';
-import { BadgeService } from './badge.service';
+import { BadgeService } from './service/badge.service';
 import { Badge } from './entity/badge.entity';
 import { GetBadgeListResponseDto } from './dto/response/get-badge-list.request.dto';
 import { ApiQuery } from '@nestjs/swagger';

@@ -1,5 +1,5 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { GroupService } from './group.service';
+import { GroupService } from './service/group.service';
 import {
   ApiBearerAuth,
   ApiOperation,

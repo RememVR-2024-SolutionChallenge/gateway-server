@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { BadgeRepository } from './repository/badge.repository';
-import { User } from '../user/entity/user.entity';
-import { GroupRepository } from '../group/repository/group.repository';
-import { Badge } from './entity/badge.entity';
-import { GroupService } from '../group/group.service';
+import { BadgeRepository } from '../repository/badge.repository';
+import { User } from '../../user/entity/user.entity';
+import { GroupRepository } from '../../group/repository/group.repository';
+import { Badge } from '../entity/badge.entity';
+import { GroupService } from '../../group/service/group.service';
 
 @Injectable()
 export class BadgeService {

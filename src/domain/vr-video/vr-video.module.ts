@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { GcpModule } from 'src/common/gcp/gcp.module';
-import { GroupService } from '../group/group.service';
+import { GroupService } from '../group/service/group.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Group } from '../group/entity/group.entity';
 import { User } from '../user/entity/user.entity';

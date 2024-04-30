@@ -2,10 +2,10 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/domain/user/entity/user.entity';
 import { UserRepository } from 'src/domain/user/repository/user.repository';
-import { RefreshTokenRequestDto } from './dto/request/refresh-token.request.dto';
-import { RefreshTokenResponseDto } from './dto/response/refresh-token.response.dto';
-import { GoogleAuthResponseDto } from './dto/response/google-auth.response.dto';
-import { GoogleAuthProfileType } from './type/google-auth-profile.type';
+import { RefreshTokenRequestDto } from '../dto/request/refresh-token.request.dto';
+import { RefreshTokenResponseDto } from '../dto/response/refresh-token.response.dto';
+import { GoogleAuthResponseDto } from '../dto/response/google-auth.response.dto';
+import { GoogleAuthProfileType } from '../type/google-auth-profile.type';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
