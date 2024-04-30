@@ -8,7 +8,7 @@ import { SampleGenerateSceneRequestDto } from '../dto/request/sample-generate-sc
 import { SampleGenerateAvatarRequestDto } from '../dto/request/sample-generate-avatar.request.dto';
 
 // NOTE: sample uses the same queue with normal request
-import { AiTaskQueueRepository } from '../../../common/gcp/firestore/repository/ai-task-queue.repository';
+import { AiTaskQueueRepository } from '../../../common/gcp/memorystore/ai-task-queue.repository';
 import { SampleVrResourceDto } from '../dto/response/sample-get-vr-resources.response.dto';
 import { SampleVrResourceRepository } from '../repository/sample-vr-resource.repository';
 

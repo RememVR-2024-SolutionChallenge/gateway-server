@@ -4,7 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { CloudFunctionsRepository } from './cloud-functions/cloud-functions.repository';
 import { VrVideoStorageRepository } from './cloud-storage/vr-video-storage.repository';
-import { AiTaskQueueRepository } from './firestore/repository/ai-task-queue.repository';
+import { AiTaskQueueRepository } from './memorystore/ai-task-queue.repository';
 import { RequestInfoRepository } from './firestore/repository/request-info.repository';
 import { SampleAiTaskRequestRepository } from './firestore/repository/sample-ai-task-request.repository';
 import { AiTaskRequestRepository } from './firestore/repository/ai-task-request.repository';
