@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { VrResourceController } from './vr-resource.controller';
 import { VrResourceQueueService } from './service/vr-resource-queue.service';
-import { AiTaskRequestRepository } from './repository/ai-task-request.repository';
 import { VrResourceService } from './service/vr-resource.service';
 import { VrResourceRepository } from './repository/vr-resource.repository';
 import { VrResource } from './entity/vr-resource.entity';
@@ -23,12 +22,7 @@ import { User } from '../user/entity/user.entity';
     GroupModule,
   ],
   controllers: [VrResourceController],
-  providers: [
-    VrResourceQueueService,
-    AiTaskRequestRepository,
-    VrResourceService,
-    VrResourceRepository,
-  ],
+  providers: [VrResourceQueueService, VrResourceService, VrResourceRepository],
   exports: [VrResourceRepository],
 })
 export class VrResourceModule {}

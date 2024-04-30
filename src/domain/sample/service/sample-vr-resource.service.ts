@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { createHash } from 'crypto';
 import { VrResourceStorageRepository } from 'src/common/gcp/cloud-storage/vr-resource-storage.repository';
-import { SampleAiTaskRequestRepository } from '../repository/sample-ai-task-request.repository';
-import { SampleAiTaskRequest } from '../document/sample-ai-task-request.document';
+import { SampleAiTaskRequestRepository } from '../../../common/gcp/firestore/repository/sample-ai-task-request.repository';
+import { SampleAiTaskRequest } from '../../../common/gcp/firestore/document/sample-ai-task-request.document';
 import { CloudFunctionsRepository } from 'src/common/gcp/cloud-functions/cloud-functions.repository';
 import { SampleGenerateSceneRequestDto } from '../dto/request/sample-generate-scene.request.dto';
 import { SampleGenerateAvatarRequestDto } from '../dto/request/sample-generate-avatar.request.dto';
 
 // NOTE: sample uses the same queue with normal request
-import { AiTaskQueueRepository } from '../repository/ai-task-queue.repository';
+import { AiTaskQueueRepository } from '../../../common/gcp/firestore/repository/ai-task-queue.repository';
 import { SampleVrResourceDto } from '../dto/response/sample-get-vr-resources.response.dto';
 import { SampleVrResourceRepository } from '../repository/sample-vr-resource.repository';
 
