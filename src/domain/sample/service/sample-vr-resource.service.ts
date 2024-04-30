@@ -6,20 +6,15 @@ import { SampleAiTaskRequest } from '../../../common/gcp/firestore/document/samp
 import { CloudFunctionsRepository } from 'src/common/gcp/cloud-functions/cloud-functions.repository';
 import { SampleGenerateSceneRequestDto } from '../dto/request/sample-generate-scene.request.dto';
 import { SampleGenerateAvatarRequestDto } from '../dto/request/sample-generate-avatar.request.dto';
-
-// NOTE: sample uses the same queue with normal request
 import { AiTaskQueueRepository } from '../../../common/gcp/memorystore/ai-task-queue.repository';
 import { SampleVrResourceDto } from '../dto/response/sample-get-vr-resources.response.dto';
-import { SampleVrResourceRepository } from '../repository/sample-vr-resource.repository';
+import { VrResourceRepository } from 'src/domain/vr-resource/repository/vr-resource.repository';
 
 @Injectable()
 export class SampleVrResourceService {
   constructor(
-    // sample has difference in database entity.
-    private readonly vrResourceRepository: SampleVrResourceRepository,
     private readonly aiTaskRequestRepository: SampleAiTaskRequestRepository,
-
-    // but, shared queue, storage, etc...
+    private readonly vrResourceRepository: VrResourceRepository,
     private readonly vrResourceStorageRepository: VrResourceStorageRepository,
     private readonly aiTaskQueueRepository: AiTaskQueueRepository,
     private readonly cloudFunctionsRepository: CloudFunctionsRepository,
@@ -32,7 +27,7 @@ export class SampleVrResourceService {
     const { title, location } = requestDto;
     const requestId = this.generateRequestId();
 
-    // 1. Store face source to GCP Cloud Storage.
+    // 1. Store source to GCP Cloud Storage.
     const sceneVideoPath = `3dgs-request/scene/${requestId}/video`;
     await this.vrResourceStorageRepository.uploadFile(video, sceneVideoPath);
 
@@ -96,9 +91,12 @@ export class SampleVrResourceService {
   }
 
   async getVrResources(): Promise<SampleVrResourceDto[]> {
-    const vrResources = await this.vrResourceRepository.find();
+    // find sample vr resources
+    const sampleResources = await this.vrResourceRepository.findSamples();
+
+    // generate signed url list
     const vrResourceDtos = await Promise.all(
-      vrResources.map(async (vrResource) => {
+      sampleResources.map(async (vrResource) => {
         const storageUrls =
           await this.vrResourceStorageRepository.generateSignedUrlList(
             vrResource.filePath,
@@ -107,9 +105,11 @@ export class SampleVrResourceService {
       }),
     );
 
+    // return dto
     return vrResourceDtos;
   }
 
+  /* -------------------------------------------------------------------------- */
   private generateRequestId(): string {
     const currentTime = Date.now().toString();
     const data = `${currentTime}`;

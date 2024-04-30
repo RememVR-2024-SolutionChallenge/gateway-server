@@ -1,11 +1,12 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { SampleVrResource } from '../../entity/sample-vr-resource.entity';
+import { VrResource } from '../../../vr-resource/entity/vr-resource.entity';
 
-export class SampleVrResourceDto extends PickType(SampleVrResource, [
+export class SampleVrResourceDto extends PickType(VrResource, [
   'id',
   'title',
   'type',
   'createdAt',
+  'isSample',
 ] as const) {
   @ApiProperty({
     description: '인증된 storage URL (10분 간 유효)',
@@ -17,7 +18,7 @@ export class SampleVrResourceDto extends PickType(SampleVrResource, [
   storageUrls: string[];
 
   static of(
-    vrResource: SampleVrResource,
+    vrResource: VrResource,
     storageUrls: string[],
   ): SampleVrResourceDto {
     return {
@@ -26,6 +27,7 @@ export class SampleVrResourceDto extends PickType(SampleVrResource, [
       type: vrResource.type,
       storageUrls: storageUrls,
       createdAt: vrResource.createdAt,
+      isSample: vrResource.isSample,
     };
   }
 }

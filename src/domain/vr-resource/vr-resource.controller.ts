@@ -39,7 +39,6 @@ export class VrResourceController {
   constructor(
     private readonly vrResourceQueueService: VrResourceQueueService,
     private readonly vrResourceService: VrResourceService,
-    private readonly sampleVrResourceService: SampleVrResourceService,
   ) {}
 
   @ApiOperation({
@@ -100,9 +99,7 @@ export class VrResourceController {
     @AuthUser() user: User,
   ): Promise<GetVrResourcesResponseDto> {
     const vrResourceDtos = await this.vrResourceService.getVrResources(user);
-    const sampleVrResourceDtos =
-      await this.sampleVrResourceService.getVrResources();
-    return new GetVrResourcesResponseDto(vrResourceDtos, sampleVrResourceDtos);
+    return new GetVrResourcesResponseDto(vrResourceDtos);
   }
 
   @ApiOperation({

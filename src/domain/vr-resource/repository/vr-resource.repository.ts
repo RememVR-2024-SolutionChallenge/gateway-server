@@ -12,6 +12,12 @@ export class VrResourceRepository extends Repository<VrResource> {
     super(repository.target, repository.manager);
   }
 
+  async findSamples(): Promise<VrResource[]> {
+    return this.repository.find({
+      where: { isSample: true },
+    });
+  }
+
   async findByGroupId(groupId: string): Promise<VrResource[]> {
     return this.repository.find({
       where: { group: { id: groupId } },

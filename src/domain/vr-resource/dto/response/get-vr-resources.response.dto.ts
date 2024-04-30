@@ -1,12 +1,12 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { VrResource } from '../../entity/vr-resource.entity';
-import { SampleVrResourceDto } from 'src/domain/sample/dto/response/sample-get-vr-resources.response.dto';
 
 export class VrResourceDto extends PickType(VrResource, [
   'id',
   'title',
   'type',
   'createdAt',
+  'isSample',
 ] as const) {
   @ApiProperty({
     description:
@@ -25,6 +25,7 @@ export class VrResourceDto extends PickType(VrResource, [
       type: vrResource.type,
       storageUrls: storageUrls,
       createdAt: vrResource.createdAt,
+      isSample: vrResource.isSample,
     };
   }
 }
@@ -36,17 +37,7 @@ export class GetVrResourcesResponseDto {
   })
   vrResources: VrResourceDto[];
 
-  @ApiProperty({
-    description: '샘플 VR자원 목록',
-    type: [SampleVrResourceDto],
-  })
-  sampleVrResources: SampleVrResourceDto[];
-
-  constructor(
-    vrResources: VrResourceDto[],
-    sampleVrResources: SampleVrResourceDto[],
-  ) {
+  constructor(vrResources: VrResourceDto[]) {
     this.vrResources = vrResources;
-    this.sampleVrResources = sampleVrResources;
   }
 }

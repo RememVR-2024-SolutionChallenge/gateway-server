@@ -18,7 +18,6 @@ import { User } from '../user/entity/user.entity';
   imports: [
     TypeOrmModule.forFeature([Group, User, VrResource]),
     GcpModule,
-    SampleModule,
     GroupModule,
   ],
   controllers: [VrResourceController],
