@@ -7,7 +7,7 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from './service/auth.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GoogleAuthResponseDto } from './dto/response/google-auth.response.dto';
 import { GoogleAuthGuard } from '../../common/auth/guard/google-auth.guard';

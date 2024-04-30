@@ -3,7 +3,7 @@ import { createHash } from 'crypto';
 import { VrResourceStorageRepository } from 'src/common/gcp/cloud-storage/vr-resource-storage.repository';
 import { AiTaskRequestRepository } from '../../../common/gcp/firestore/repository/ai-task-request.repository';
 import { AiTaskRequest } from '../../../common/gcp/firestore/document/ai-task-request.document';
-import { GroupService } from 'src/domain/group/group.service';
+import { GroupService } from 'src/domain/group/service/group.service';
 import { User } from 'src/domain/user/entity/user.entity';
 import { AiTaskQueueRepository } from '../../../common/gcp/memorystore/ai-task-queue.repository';
 import { CloudFunctionsRepository } from 'src/common/gcp/cloud-functions/cloud-functions.repository';

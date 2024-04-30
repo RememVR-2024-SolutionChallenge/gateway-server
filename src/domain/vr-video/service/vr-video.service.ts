@@ -11,7 +11,7 @@ import { createHash } from 'crypto';
 import { VrResourceRepository } from 'src/domain/vr-resource/repository/vr-resource.repository';
 import { ObjectDataType } from '../type/object-data.type';
 import { VrVideoRepository } from '../repository/vr-video.repository';
-import { GroupService } from 'src/domain/group/group.service';
+import { GroupService } from 'src/domain/group/service/group.service';
 import {
   GetVrVideosResponseDto,
   VrResourceDtoForVideo,

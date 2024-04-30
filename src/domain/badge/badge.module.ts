@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Group } from '../group/entity/group.entity';
-import { BadgeService } from './badge.service';
+import { BadgeService } from './service/badge.service';
 import { BadgeRepository } from './repository/badge.repository';
 import { BadgeController } from './badge.controller';
 import { User } from '../user/entity/user.entity';
