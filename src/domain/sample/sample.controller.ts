@@ -15,6 +15,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { SampleVrResourceService } from './service/sample-vr-resource.service';
@@ -77,6 +78,10 @@ export class SampleController {
   }
 
   @ApiOperation({ summary: '완성된 VR 자원(배경, 아바타) 불러오기' })
+  @ApiResponse({
+    status: 200,
+    type: SampleGetVrResourcesResponseDto,
+  })
   @Get('/')
   async getVrResources(
     @Body() requestDto: SampleGetVrResourcesRequestDto,
