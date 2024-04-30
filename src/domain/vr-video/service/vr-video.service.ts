@@ -162,14 +162,14 @@ export class VrVideoService {
     }
 
     // Save VR Video to main DB.
-    const vrVideo = new VrVideo();
     const vrVideoId = this.generateVrVideoId(user.id);
-    vrVideo.id = vrVideoId;
-    vrVideo.title = title;
-    vrVideo.scene = scene;
-    vrVideo.avatars = avatars;
-    vrVideo.group = group;
-    await this.vrVideoRepository.save(vrVideo);
+    await this.vrVideoRepository.createRealVrVideo(
+      vrVideoId,
+      title,
+      scene,
+      avatars,
+      group,
+    );
 
     await this.uploadVideoPositionToCloudStorage(
       vrVideoId,

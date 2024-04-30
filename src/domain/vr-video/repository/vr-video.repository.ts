@@ -21,6 +21,23 @@ export class VrVideoRepository extends Repository<VrVideo> {
     });
   }
 
+  async createRealVrVideo(
+    id: string,
+    title: string,
+    scene: VrResource,
+    avatars: VrResource[],
+    group: Group,
+  ): Promise<VrVideo> {
+    const vrVideo = new VrVideo();
+    vrVideo.id = id;
+    vrVideo.title = title;
+    vrVideo.scene = scene;
+    vrVideo.avatars = avatars;
+    vrVideo.group = group;
+    vrVideo.isSample = false;
+    return this.repository.save(vrVideo);
+  }
+
   async findById(videoId: string): Promise<VrVideo> {
     return this.repository.findOne({
       where: { id: videoId },
