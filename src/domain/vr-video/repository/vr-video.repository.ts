@@ -21,10 +21,34 @@ export class VrVideoRepository extends Repository<VrVideo> {
     });
   }
 
+  async createVrVideo(
+    id: string,
+    title: string,
+    scene: VrResource,
+    avatars: VrResource[],
+    isSample: boolean,
+    group?: Group,
+  ): Promise<VrVideo> {
+    const vrVideo = new VrVideo();
+    vrVideo.id = id;
+    vrVideo.title = title;
+    vrVideo.scene = scene;
+    vrVideo.avatars = avatars;
+    vrVideo.isSample = isSample;
+    if (group) vrVideo.group = group;
+    return this.repository.save(vrVideo);
+  }
+
   async findById(videoId: string): Promise<VrVideo> {
     return this.repository.findOne({
       where: { id: videoId },
       relations: ['scene', 'avatars'],
+    });
+  }
+
+  async findSamples(): Promise<VrVideo[]> {
+    return this.repository.find({
+      where: { isSample: true },
     });
   }
 }

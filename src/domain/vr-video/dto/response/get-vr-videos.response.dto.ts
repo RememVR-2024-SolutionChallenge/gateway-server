@@ -7,6 +7,7 @@ export class VrResourceDtoForVideo extends PickType(VrResource, [
   'title',
   'type',
   'createdAt',
+  'isSample',
 ] as const) {
   // ! storageUrls: vr-resource(아바타) 파일
   @ApiProperty({
@@ -36,12 +37,14 @@ export class VrResourceDtoForVideo extends PickType(VrResource, [
       storageUrls: storageUrls,
       inVideoPositionFile: inVideoPositionFile,
       createdAt: vrResource.createdAt,
+      isSample: vrResource.isSample,
     };
   }
 }
 
 export class GetVrVideosResponseDto extends PickType(VrVideo, [
   'title',
+  'isSample',
 ] as const) {
   @ApiProperty({ type: VrResourceDtoForVideo })
   scene: VrResourceDtoForVideo;

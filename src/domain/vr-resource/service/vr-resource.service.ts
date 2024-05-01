@@ -15,10 +15,32 @@ export class VrResourceService {
   ) {}
 
   async getVrResources(user: User): Promise<VrResourceDto[]> {
+    // 1. Get VR resource (sample, real both)
     const groupId = (await this.groupService.getMyGroup(user)).id;
-
     const vrResources = await this.vrResourceRepository.findByGroupId(groupId);
-    const vrResourceDtos = await Promise.all(
+    const sampleVrResources = await this.vrResourceRepository.findSamples();
+
+    // 2. make as dto.
+    const vrResourceDtos = await this.makeVrResourceDto(
+      vrResources.concat(sampleVrResources),
+    );
+    return vrResourceDtos;
+  }
+
+  async getSampleVrResources(): Promise<VrResourceDto[]> {
+    // 1. Get VR resource (sample)
+    const sampleVrResources = await this.vrResourceRepository.findSamples();
+
+    // 2. make as dto.
+    const vrResourceDtos = await this.makeVrResourceDto(sampleVrResources);
+    return vrResourceDtos;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  private makeVrResourceDto(
+    vrResources: VrResource[],
+  ): Promise<VrResourceDto[]> {
+    return Promise.all(
       vrResources.map(async (vrResource) => {
         const storageUrls =
           await this.vrResourceStorageRepository.generateSignedUrlList(
@@ -27,7 +49,5 @@ export class VrResourceService {
         return VrResourceDto.of(vrResource, storageUrls);
       }),
     );
-
-    return vrResourceDtos;
   }
 }

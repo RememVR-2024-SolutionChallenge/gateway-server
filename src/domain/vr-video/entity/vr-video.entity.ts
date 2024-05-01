@@ -27,6 +27,12 @@ export class VrVideo {
   @Column()
   title: string;
 
+  @ApiProperty({
+    description: '샘플 여부',
+    example: false,
+  })
+  isSample: boolean;
+
   @ManyToOne(() => Group, (group) => group.badges, { onDelete: 'CASCADE' })
   group: Group;
 

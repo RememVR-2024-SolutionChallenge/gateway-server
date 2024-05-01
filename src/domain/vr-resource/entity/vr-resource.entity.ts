@@ -43,6 +43,12 @@ export class VrResource {
   type: 'avatar' | 'scene';
 
   @ApiProperty({
+    description: '샘플 여부',
+    example: false,
+  })
+  isSample: boolean;
+
+  @ApiProperty({
     description: 'VR 리소스 생성일',
     example: '2021-09-23T00:00:00.000Z',
   })

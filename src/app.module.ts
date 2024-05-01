@@ -17,7 +17,6 @@ import { VrVideo } from './domain/vr-video/entity/vr-video.entity';
 import { VrVideoModule } from './domain/vr-video/vr-video.module';
 import { AppController } from './app.controller';
 import { SampleModule } from './domain/sample/sample.module';
-import { SampleVrResource } from './domain/sample/entity/sample-vr-resource.entity';
 
 @Module({
   imports: [
@@ -35,7 +34,7 @@ import { SampleVrResource } from './domain/sample/entity/sample-vr-resource.enti
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
-        entities: [User, Group, Badge, VrResource, VrVideo, SampleVrResource],
+        entities: [User, Group, Badge, VrResource, VrVideo],
         migrations: [__dirname + '/src/migrations/*.ts'],
         autoLoadEntities: true,
         charset: 'utf8mb4',

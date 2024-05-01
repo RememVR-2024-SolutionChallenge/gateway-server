@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   GenerateVrVideoRequestDto,
   VrResourceInfo,
@@ -6,7 +10,6 @@ import {
 import { User } from 'src/domain/user/entity/user.entity';
 import { GroupRepository } from 'src/domain/group/repository/group.repository';
 import { VrVideoStorageRepository } from 'src/common/gcp/cloud-storage/vr-video-storage.repository';
-import { VrVideo } from '../entity/vr-video.entity';
 import { createHash } from 'crypto';
 import { VrResourceRepository } from 'src/domain/vr-resource/repository/vr-resource.repository';
 import { ObjectDataType } from '../type/object-data.type';
@@ -17,6 +20,9 @@ import {
   VrResourceDtoForVideo,
 } from '../dto/response/get-vr-videos.response.dto';
 import { VrResourceStorageRepository } from 'src/common/gcp/cloud-storage/vr-resource-storage.repository';
+import { VrVideo } from '../entity/vr-video.entity';
+import { SampleGetVrResourcesRequestDto } from 'src/domain/sample/dto/request/sample-get-vr-resource.request.dto';
+import { SampleGenerateVideoRequestDto } from 'src/domain/sample/dto/request/sample-generate-video.request.dto';
 
 @Injectable()
 export class VrVideoService {
@@ -29,60 +35,6 @@ export class VrVideoService {
     private readonly vrVideoRepository: VrVideoRepository,
   ) {}
 
-  /* ---------------------------- GET /vr-video/:id --------------------------- */
-
-  /**
-   * videoID를 통해 특정 video만 가져옴
-   * @param user UserID
-   * @param videoId videoID
-   */
-  async getVrVideo(
-    user: User,
-    videoId: string,
-  ): Promise<GetVrVideosResponseDto> {
-    const vrVideo = await this.vrVideoRepository.findById(videoId);
-    // 1. validation logic
-    if (!vrVideo) {
-      throw new NotFoundException('VrVideo not found');
-    }
-    const isUserInGroup = await this.groupRepository.isUserInGroup(
-      user.id,
-      vrVideo.group.id,
-    );
-    if (!isUserInGroup) {
-      throw new NotFoundException('User is not in the group');
-    }
-
-    // 2. return DTO from DB.
-    const sceneDto = VrResourceDtoForVideo.of(
-      vrVideo.scene,
-      await this.vrResourceStorageRepository.generateSignedUrlList(
-        vrVideo.scene.filePath,
-      ),
-      await this.getResourcePositionFileURL(
-        vrVideo.id,
-        vrVideo.scene.id,
-        'scene',
-      ),
-    );
-    const avatarDtos = await Promise.all(
-      vrVideo.avatars.map(async (avatar) => {
-        return VrResourceDtoForVideo.of(
-          avatar,
-          await this.vrResourceStorageRepository.generateSignedUrlList(
-            avatar.filePath,
-          ),
-          await this.getResourcePositionFileURL(
-            vrVideo.id,
-            avatar.id,
-            'avatar',
-          ),
-        );
-      }),
-    );
-    return new GetVrVideosResponseDto(vrVideo, sceneDto, avatarDtos);
-  }
-
   /* ------------------------------ GET /vr-video ----------------------------- */
 
   /**
@@ -90,42 +42,27 @@ export class VrVideoService {
    * @returns {GetVrVideosResponseDto[]}
    */
   async getVrVideos(user: User): Promise<GetVrVideosResponseDto[]> {
+    // 1. group의 VR 비디오들을 가져옴.
     const groupId = (await this.groupService.getMyGroup(user)).id;
     const vrVideos = await this.vrVideoRepository.findByGroupIdWithResources(
       groupId,
     );
+    // 2. 샘플 VR 비디오들을 가져옴.
+    const sampleVrVideos = await this.vrVideoRepository.findSamples();
+    // 3. DTO 형식으로 return함.
+    return await this.makeVrVideoDto(vrVideos.concat(sampleVrVideos));
+  }
 
-    return await Promise.all(
-      vrVideos.map(async (vrVideo) => {
-        const sceneDto = VrResourceDtoForVideo.of(
-          vrVideo.scene,
-          await this.vrResourceStorageRepository.generateSignedUrlList(
-            vrVideo.scene.filePath,
-          ),
-          await this.getResourcePositionFileURL(
-            vrVideo.id,
-            vrVideo.scene.id,
-            'scene',
-          ),
-        );
-        const avatarDtos = await Promise.all(
-          vrVideo.avatars.map(async (avatar) => {
-            return VrResourceDtoForVideo.of(
-              avatar,
-              await this.vrResourceStorageRepository.generateSignedUrlList(
-                avatar.filePath,
-              ),
-              await this.getResourcePositionFileURL(
-                vrVideo.id,
-                avatar.id,
-                'avatar',
-              ),
-            );
-          }),
-        );
-        return new GetVrVideosResponseDto(vrVideo, sceneDto, avatarDtos);
-      }),
-    );
+  /**
+   * @param user userID
+   * @returns {GetVrVideosResponseDto[]}
+   */
+  async getSampleVrVideos(): Promise<GetVrVideosResponseDto[]> {
+    // 1. get relevant videos
+    const sampleVrVideos = await this.vrVideoRepository.findSamples();
+
+    // 2. make DTO
+    return await this.makeVrVideoDto(sampleVrVideos);
   }
 
   /* ----------------------------- POST /vr-video ----------------------------- */
@@ -141,9 +78,60 @@ export class VrVideoService {
   async generateVrVideo(
     user: User,
     requestDto: GenerateVrVideoRequestDto,
+    isSample: boolean,
   ): Promise<void> {
     const group = await this.groupRepository.findByCareGiverId(user.id);
     const { title, sceneInfo, avatarsInfo } = requestDto;
+
+    // Get VR Resource From DB.
+    const scene = await this.vrResourceRepository.findById(
+      sceneInfo.resourceId,
+    );
+    const avatars = await Promise.all(
+      avatarsInfo.map(async (avatarInfo) => {
+        const avatar = await this.vrResourceRepository.findById(
+          avatarInfo.resourceId,
+        );
+        return avatar;
+      }),
+    );
+
+    // security / validation check
+    if (!scene || avatars.some((avatar) => !avatar)) {
+      throw new NotFoundException('Resource not found');
+    }
+    if (
+      (scene.group.id !== group.id && scene.isSample == false) ||
+      avatars.some(
+        (avatar) => avatar.group.id !== group.id && avatar.isSample == false,
+      )
+    ) {
+      throw new UnauthorizedException('Resource not found');
+    }
+
+    // Save VR Video to main DB.
+    const vrVideoId = this.generateVrVideoId(user.id);
+    await this.vrVideoRepository.createVrVideo(
+      vrVideoId,
+      title,
+      scene,
+      avatars,
+      isSample,
+      group,
+    );
+
+    await this.uploadVideoPositionToCloudStorage(
+      vrVideoId,
+      sceneInfo,
+      avatarsInfo,
+    );
+  }
+
+  async generateSampleVrVideo(
+    requestDto: SampleGenerateVideoRequestDto,
+    isSample: boolean,
+  ): Promise<void> {
+    const { title, sceneInfo, avatarsInfo, key } = requestDto;
 
     // Get VR Resource From DB.
     const scene = await this.vrResourceRepository.findById(
@@ -162,14 +150,14 @@ export class VrVideoService {
     }
 
     // Save VR Video to main DB.
-    const vrVideo = new VrVideo();
-    const vrVideoId = this.generateVrVideoId(user.id);
-    vrVideo.id = vrVideoId;
-    vrVideo.title = title;
-    vrVideo.scene = scene;
-    vrVideo.avatars = avatars;
-    vrVideo.group = group;
-    await this.vrVideoRepository.save(vrVideo);
+    const vrVideoId = this.generateVrVideoId(key);
+    await this.vrVideoRepository.createVrVideo(
+      vrVideoId,
+      title,
+      scene,
+      avatars,
+      isSample,
+    );
 
     await this.uploadVideoPositionToCloudStorage(
       vrVideoId,
@@ -243,4 +231,95 @@ export class VrVideoService {
       }),
     );
   }
+
+  private makeVrVideoDto(
+    vrVideos: VrVideo[],
+  ): Promise<GetVrVideosResponseDto[]> {
+    return Promise.all(
+      vrVideos.map(async (vrVideo) => {
+        const sceneDto = VrResourceDtoForVideo.of(
+          vrVideo.scene,
+          await this.vrResourceStorageRepository.generateSignedUrlList(
+            vrVideo.scene.filePath,
+          ),
+          await this.getResourcePositionFileURL(
+            vrVideo.id,
+            vrVideo.scene.id,
+            'scene',
+          ),
+        );
+        const avatarDtos = await Promise.all(
+          vrVideo.avatars.map(async (avatar) => {
+            return VrResourceDtoForVideo.of(
+              avatar,
+              await this.vrResourceStorageRepository.generateSignedUrlList(
+                avatar.filePath,
+              ),
+              await this.getResourcePositionFileURL(
+                vrVideo.id,
+                avatar.id,
+                'avatar',
+              ),
+            );
+          }),
+        );
+        return new GetVrVideosResponseDto(vrVideo, sceneDto, avatarDtos);
+      }),
+    );
+  }
 }
+
+// // deprecated
+// // /* ---------------------------- GET /vr-video/:id --------------------------- */
+
+// // /**
+// //  * videoID를 통해 특정 video만 가져옴
+// //  * @param user UserID
+// //  * @param videoId videoID
+// //  */
+// // async getVrVideo(
+// //   user: User,
+// //   videoId: string,
+// // ): Promise<GetVrVideosResponseDto> {
+// //   const vrVideo = await this.vrVideoRepository.findById(videoId);
+// //   // 1. validation logic
+// //   if (!vrVideo) {
+// //     throw new NotFoundException('VrVideo not found');
+// //   }
+// //   const isUserInGroup = await this.groupRepository.isUserInGroup(
+// //     user.id,
+// //     vrVideo.group.id,
+// //   );
+// //   if (!isUserInGroup) {
+// //     throw new NotFoundException('User is not in the group');
+// //   }
+
+// //   // 2. return DTO from DB.
+// //   const sceneDto = VrResourceDtoForVideo.of(
+// //     vrVideo.scene,
+// //     await this.vrResourceStorageRepository.generateSignedUrlList(
+// //       vrVideo.scene.filePath,
+// //     ),
+// //     await this.getResourcePositionFileURL(
+// //       vrVideo.id,
+// //       vrVideo.scene.id,
+// //       'scene',
+// //     ),
+// //   );
+// //   const avatarDtos = await Promise.all(
+// //     vrVideo.avatars.map(async (avatar) => {
+// //       return VrResourceDtoForVideo.of(
+// //         avatar,
+// //         await this.vrResourceStorageRepository.generateSignedUrlList(
+// //           avatar.filePath,
+// //         ),
+// //         await this.getResourcePositionFileURL(
+// //           vrVideo.id,
+// //           avatar.id,
+// //           'avatar',
+// //         ),
+// //       );
+// //     }),
+// //   );
+// //   return new GetVrVideosResponseDto(vrVideo, sceneDto, avatarDtos);
+// // }

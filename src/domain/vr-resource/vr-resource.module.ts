@@ -18,11 +18,10 @@ import { User } from '../user/entity/user.entity';
   imports: [
     TypeOrmModule.forFeature([Group, User, VrResource]),
     GcpModule,
-    SampleModule,
     GroupModule,
   ],
   controllers: [VrResourceController],
   providers: [VrResourceQueueService, VrResourceService, VrResourceRepository],
-  exports: [VrResourceRepository],
+  exports: [VrResourceRepository, VrResourceService, VrResourceQueueService],
 })
 export class VrResourceModule {}
