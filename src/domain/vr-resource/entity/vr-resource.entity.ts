@@ -46,6 +46,7 @@ export class VrResource {
     description: '샘플 여부',
     example: false,
   })
+  @Column()
   isSample: boolean;
 
   @ApiProperty({

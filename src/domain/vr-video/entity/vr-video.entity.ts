@@ -31,6 +31,7 @@ export class VrVideo {
     description: '샘플 여부',
     example: false,
   })
+  @Column()
   isSample: boolean;
 
   @ManyToOne(() => Group, (group) => group.badges, { onDelete: 'CASCADE' })
