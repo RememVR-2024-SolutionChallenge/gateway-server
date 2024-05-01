@@ -32,7 +32,7 @@ export class VrVideoController {
     @AuthUser() user: User,
     @Body() requestDto: GenerateVrVideoRequestDto,
   ): Promise<void> {
-    return await this.vrVideoService.generateVrVideo(user, requestDto);
+    return await this.vrVideoService.generateVrVideo(user, requestDto, true);
   }
 
   @ApiOperation({ summary: 'VR 비디오 정보 불러오기' })
@@ -43,17 +43,18 @@ export class VrVideoController {
   async getVrVideos(@AuthUser() user: User): Promise<GetVrVideosResponseDto[]> {
     return await this.vrVideoService.getVrVideos(user);
   }
-
-  // 특정 VR 비디오 id를 통해서 특정한 VR비디오 정보를 불러오는 API를 작성할것.
-  @ApiOperation({ summary: 'VR 비디오 정보 불러오기' })
-  @ApiBearerAuth()
-  @ApiResponse({ type: GetVrVideosResponseDto })
-  @UseGuards(JwtAuthGuard, InitEnrollGuard)
-  @Get('/:id')
-  async getVrVideo(
-    @AuthUser() user: User,
-    @Param('id') videoId: string,
-  ): Promise<GetVrVideosResponseDto> {
-    return await this.vrVideoService.getVrVideo(user, videoId);
-  }
 }
+
+// deprecated
+// // 특정 VR 비디오 id를 통해서 특정한 VR비디오 정보를 불러오는 API를 작성할것.
+// @ApiOperation({ summary: 'VR 비디오 정보 불러오기' })
+// @ApiBearerAuth()
+// @ApiResponse({ type: GetVrVideosResponseDto })
+// @UseGuards(JwtAuthGuard, InitEnrollGuard)
+// @Get('/:id')
+// async getVrVideo(
+//   @AuthUser() user: User,
+//   @Param('id') videoId: string,
+// ): Promise<GetVrVideosResponseDto> {
+//   return await this.vrVideoService.getVrVideo(user, videoId);
+// }
