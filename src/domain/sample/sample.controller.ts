@@ -3,7 +3,9 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  Param,
   Post,
+  Query,
   UnauthorizedException,
   UploadedFile,
   UploadedFiles,
@@ -24,9 +26,7 @@ import {
   FileInterceptor,
 } from '@nestjs/platform-express';
 import { SampleGenerateAvatarRequestDto } from './dto/request/sample-generate-avatar.request.dto';
-import { SampleGetVrResourcesRequestDto } from './dto/request/sample-get-vr-resource.request.dto';
 import { ConfigService } from '@nestjs/config';
-import { SampleGetVrVideosRequestDto } from './dto/request/sample-get-vr-video.request.dto';
 import { GetVrVideosResponseDto } from '../vr-video/dto/response/get-vr-videos.response.dto';
 import { GetVrResourcesResponseDto } from '../vr-resource/dto/response/get-vr-resources.response.dto';
 import { VrVideoService } from '../vr-video/service/vr-video.service';
@@ -91,9 +91,9 @@ export class SampleController {
   })
   @Get('/vr-resource')
   async getVrResources(
-    @Body() requestDto: SampleGetVrResourcesRequestDto,
+    @Query('key') key: string,
   ): Promise<GetVrResourcesResponseDto> {
-    this.validateAdminKey(requestDto.key);
+    this.validateAdminKey(key);
     return new GetVrResourcesResponseDto(
       await this.vrResourceService.getSampleVrResources(),
     );
@@ -105,9 +105,9 @@ export class SampleController {
   @ApiResponse({ type: GetVrVideosResponseDto })
   @Get('/vr-video')
   async getSampleVrVideos(
-    @Body() requestDto: SampleGetVrVideosRequestDto,
+    @Query('key') key: string,
   ): Promise<GetVrVideosResponseDto[]> {
-    this.validateAdminKey(requestDto.key);
+    this.validateAdminKey(key);
     return this.vrVideoService.getSampleVrVideos();
   }
 

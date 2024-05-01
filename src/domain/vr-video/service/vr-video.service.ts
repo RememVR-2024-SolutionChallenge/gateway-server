@@ -21,7 +21,6 @@ import {
 } from '../dto/response/get-vr-videos.response.dto';
 import { VrResourceStorageRepository } from 'src/common/gcp/cloud-storage/vr-resource-storage.repository';
 import { VrVideo } from '../entity/vr-video.entity';
-import { SampleGetVrResourcesRequestDto } from 'src/domain/sample/dto/request/sample-get-vr-resource.request.dto';
 import { SampleGenerateVideoRequestDto } from 'src/domain/sample/dto/request/sample-generate-video.request.dto';
 
 @Injectable()

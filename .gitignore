@@ -40,3 +40,6 @@ lerna-debug.log*
 
 # GCP Security
 gcp-service-account.json
+
+# private
+/private
