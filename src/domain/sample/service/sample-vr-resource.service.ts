@@ -7,8 +7,8 @@ import { CloudFunctionsRepository } from 'src/common/gcp/cloud-functions/cloud-f
 import { SampleGenerateSceneRequestDto } from '../dto/request/sample-generate-scene.request.dto';
 import { SampleGenerateAvatarRequestDto } from '../dto/request/sample-generate-avatar.request.dto';
 import { AiTaskQueueRepository } from '../../../common/gcp/memorystore/ai-task-queue.repository';
-import { SampleVrResourceDto } from '../dto/response/sample-get-vr-resources.response.dto';
 import { VrResourceRepository } from 'src/domain/vr-resource/repository/vr-resource.repository';
+import { VrResourceDto } from 'src/domain/vr-resource/dto/response/get-vr-resources.response.dto';
 
 @Injectable()
 export class SampleVrResourceService {
@@ -90,7 +90,7 @@ export class SampleVrResourceService {
     return;
   }
 
-  async getVrResources(): Promise<SampleVrResourceDto[]> {
+  async getVrResources(): Promise<VrResourceDto[]> {
     // find sample vr resources
     const sampleResources = await this.vrResourceRepository.findSamples();
 
@@ -101,7 +101,7 @@ export class SampleVrResourceService {
           await this.vrResourceStorageRepository.generateSignedUrlList(
             vrResource.filePath,
           );
-        return SampleVrResourceDto.of(vrResource, storageUrls);
+        return VrResourceDto.of(vrResource, storageUrls);
       }),
     );
 

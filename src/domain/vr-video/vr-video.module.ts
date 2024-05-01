@@ -23,5 +23,6 @@ import { VrResourceModule } from '../vr-resource/vr-resource.module';
   ],
   controllers: [VrVideoController],
   providers: [VrVideoService, VrVideoRepository],
+  exports: [VrVideoService],
 })
 export class VrVideoModule {}

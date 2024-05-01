@@ -26,8 +26,12 @@ import {
 } from '@nestjs/platform-express';
 import { SampleGenerateAvatarRequestDto } from './dto/request/sample-generate-avatar.request.dto';
 import { SampleGetVrResourcesRequestDto } from './dto/request/sample-get-vr-resource.request.dto';
-import { SampleGetVrResourcesResponseDto } from './dto/response/sample-get-vr-resources.response.dto';
 import { ConfigService } from '@nestjs/config';
+import { SampleGetVrVideosRequestDto } from './dto/request/sample-get-vr-video.request.dto';
+import { GetVrVideosResponseDto } from '../vr-video/dto/response/get-vr-videos.response.dto';
+import { GetVrResourcesResponseDto } from '../vr-resource/dto/response/get-vr-resources.response.dto';
+import { VrVideoService } from '../vr-video/service/vr-video.service';
+import { SampleGenerateVideoRequestDto } from './dto/request/sample-generate-video.request.dto';
 
 @ApiTags('Sample')
 @Controller('/sample')
@@ -37,6 +41,7 @@ export class SampleController {
   constructor(
     private readonly sampleVrResourceService: SampleVrResourceService,
     private readonly configService: ConfigService,
+    private readonly vrVideoService: VrVideoService,
   ) {
     this.adminKey = this.configService.get<string>('ADMIN_KEY');
   }
@@ -77,21 +82,39 @@ export class SampleController {
     );
   }
 
-  @ApiOperation({ summary: '완성된 VR 자원(배경, 아바타) 불러오기' })
+  @ApiOperation({ summary: '샘플 VR 자원 찾기' })
   @ApiResponse({
     status: 200,
-    type: SampleGetVrResourcesResponseDto,
+    type: GetVrResourcesResponseDto,
   })
-  @Get('/')
+  @Get('/vr-resource')
   async getVrResources(
     @Body() requestDto: SampleGetVrResourcesRequestDto,
-  ): Promise<SampleGetVrResourcesResponseDto> {
+  ): Promise<GetVrResourcesResponseDto> {
     this.validateAdminKey(requestDto.key);
-    return new SampleGetVrResourcesResponseDto(
+    return new GetVrResourcesResponseDto(
       await this.sampleVrResourceService.getVrResources(),
     );
   }
 
+  @ApiOperation({ summary: '샘플 VR 비디오 찾기' })
+  @ApiResponse({ type: GetVrVideosResponseDto })
+  @Get('/vr-video')
+  async getSampleVrVideos(
+    @Body() requestDto: SampleGetVrVideosRequestDto,
+  ): Promise<GetVrVideosResponseDto[]> {
+    this.validateAdminKey(requestDto.key);
+    return this.vrVideoService.getSampleVrVideos();
+  }
+
+  @ApiOperation({ summary: '샘플 VR 비디오 만들기' })
+  @Post('/vr-video')
+  async getVrVideos(@Body() requestDto: SampleGenerateVideoRequestDto) {
+    this.validateAdminKey(requestDto.key);
+    return this.vrVideoService.generateSampleVrVideo(requestDto, true);
+  }
+
+  /* -------------------------------------------------------------------------- */
   // ! TODO: make as decorator
   validateAdminKey(key: string) {
     if (key !== this.adminKey) {
