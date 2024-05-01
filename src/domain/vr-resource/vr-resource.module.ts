@@ -22,6 +22,6 @@ import { User } from '../user/entity/user.entity';
   ],
   controllers: [VrResourceController],
   providers: [VrResourceQueueService, VrResourceService, VrResourceRepository],
-  exports: [VrResourceRepository],
+  exports: [VrResourceRepository, VrResourceService, VrResourceQueueService],
 })
 export class VrResourceModule {}

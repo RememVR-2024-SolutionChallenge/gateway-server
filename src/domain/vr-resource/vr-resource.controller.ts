@@ -31,7 +31,6 @@ import { GetAiTaskQueueResponseDto } from './dto/response/get-ai-task-queue.resp
 import { VrResourceService } from './service/vr-resource.service';
 import { GetVrResourcesResponseDto } from './dto/response/get-vr-resources.response.dto';
 import { GenerateAvatarRequestDto } from './dto/request/generate-avatar.request.dto';
-import { SampleVrResourceService } from '../sample/service/sample-vr-resource.service';
 
 @ApiTags('VR-resource')
 @Controller('vr-resource')

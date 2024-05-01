@@ -27,6 +27,15 @@ export class VrResourceService {
     return vrResourceDtos;
   }
 
+  async getSampleVrResources(): Promise<VrResourceDto[]> {
+    // 1. Get VR resource (sample)
+    const sampleVrResources = await this.vrResourceRepository.findSamples();
+
+    // 2. make as dto.
+    const vrResourceDtos = await this.makeVrResourceDto(sampleVrResources);
+    return vrResourceDtos;
+  }
+
   /* -------------------------------------------------------------------------- */
   private makeVrResourceDto(
     vrResources: VrResource[],

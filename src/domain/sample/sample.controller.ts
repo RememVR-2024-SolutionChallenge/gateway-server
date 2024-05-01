@@ -18,7 +18,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { SampleVrResourceService } from './service/sample-vr-resource.service';
 import { SampleGenerateSceneRequestDto } from './dto/request/sample-generate-scene.request.dto';
 import {
   FileFieldsInterceptor,
@@ -32,6 +31,8 @@ import { GetVrVideosResponseDto } from '../vr-video/dto/response/get-vr-videos.r
 import { GetVrResourcesResponseDto } from '../vr-resource/dto/response/get-vr-resources.response.dto';
 import { VrVideoService } from '../vr-video/service/vr-video.service';
 import { SampleGenerateVideoRequestDto } from './dto/request/sample-generate-video.request.dto';
+import { VrResourceService } from '../vr-resource/service/vr-resource.service';
+import { VrResourceQueueService } from '../vr-resource/service/vr-resource-queue.service';
 
 @ApiTags('Sample')
 @Controller('/sample')
@@ -39,7 +40,8 @@ export class SampleController {
   private adminKey: string;
 
   constructor(
-    private readonly sampleVrResourceService: SampleVrResourceService,
+    private readonly vrResourceService: VrResourceService,
+    private readonly vrResourceQueueService: VrResourceQueueService,
     private readonly configService: ConfigService,
     private readonly vrVideoService: VrVideoService,
   ) {
@@ -56,7 +58,7 @@ export class SampleController {
     @Body() requestDto: SampleGenerateSceneRequestDto,
   ) {
     this.validateAdminKey(requestDto.key);
-    return this.sampleVrResourceService.generateScene(requestDto, video);
+    return this.vrResourceQueueService.generateSampleScene(requestDto, video);
   }
 
   @ApiOperation({ summary: '아바타 생성 요청' })
@@ -75,7 +77,7 @@ export class SampleController {
     @Body() requestDto: SampleGenerateAvatarRequestDto,
   ) {
     this.validateAdminKey(requestDto.key);
-    return this.sampleVrResourceService.generateAvatar(
+    return this.vrResourceQueueService.generateSampleAvatar(
       requestDto,
       files.face[0],
       files.body[0],
@@ -93,9 +95,11 @@ export class SampleController {
   ): Promise<GetVrResourcesResponseDto> {
     this.validateAdminKey(requestDto.key);
     return new GetVrResourcesResponseDto(
-      await this.sampleVrResourceService.getVrResources(),
+      await this.vrResourceService.getSampleVrResources(),
     );
   }
+
+  /* -------------------------------------------------------------------------- */
 
   @ApiOperation({ summary: '샘플 VR 비디오 찾기' })
   @ApiResponse({ type: GetVrVideosResponseDto })
