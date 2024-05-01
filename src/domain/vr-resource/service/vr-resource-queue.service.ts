@@ -71,10 +71,10 @@ export class VrResourceQueueService {
     const requestId = this.generateRequestId(user.id);
 
     // 1. Store file source to GCP Cloud Storage.
-    const faceFilePath = `3dgs-request/avatar/${requestId}/body`;
-    await this.vrResourceStorageRepository.uploadFile(body, faceFilePath);
-    const bodyImagePath = `3dgs-request/avatar/${requestId}/face`;
-    await this.vrResourceStorageRepository.uploadFile(face, bodyImagePath);
+    const bodyImagePath = `3dgs-request/avatar/${requestId}/body`;
+    await this.vrResourceStorageRepository.uploadFile(body, bodyImagePath);
+    const faceImagePath = `3dgs-request/avatar/${requestId}/face`;
+    await this.vrResourceStorageRepository.uploadFile(face, faceImagePath);
 
     // 2. Store request data to Firestore.
     const task: AiTaskRequest = {
@@ -88,7 +88,7 @@ export class VrResourceQueueService {
       // avatar
       type: 'avatar',
       bodyImagePath: bodyImagePath,
-      faceImagePath: faceFilePath,
+      faceImagePath: faceImagePath,
       gender: gender,
     };
     await this.aiTaskRequestRepository.addTask(requestId, task);
@@ -152,10 +152,10 @@ export class VrResourceQueueService {
     const requestId = this.generateRequestId(key);
 
     // 1. Store file source to GCP Cloud Storage.
-    const faceFilePath = `3dgs-request/avatar/${requestId}/body`;
-    await this.vrResourceStorageRepository.uploadFile(body, faceFilePath);
-    const bodyImagePath = `3dgs-request/avatar/${requestId}/face`;
-    await this.vrResourceStorageRepository.uploadFile(face, bodyImagePath);
+    const bodyImagePath = `3dgs-request/avatar/${requestId}/body`;
+    await this.vrResourceStorageRepository.uploadFile(body, bodyImagePath);
+    const faceImagePath = `3dgs-request/avatar/${requestId}/face`;
+    await this.vrResourceStorageRepository.uploadFile(face, faceImagePath);
 
     // 2. Store request data to Firestore.
     const task: SampleAiTaskRequest = {
@@ -167,7 +167,7 @@ export class VrResourceQueueService {
       // avatar
       type: 'avatar',
       bodyImagePath: bodyImagePath,
-      faceImagePath: faceFilePath,
+      faceImagePath: faceImagePath,
       gender: gender,
     };
     await this.sampleAiTaskRequestRepository.addTask(requestId, task);
