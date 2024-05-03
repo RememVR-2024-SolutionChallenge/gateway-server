@@ -14,6 +14,23 @@ export class CloudFunctionsRepository {
   }
 
   async triggerAiScheduler(): Promise<void> {
-    await this.httpService.post(this.url + '/engine-trigger').toPromise();
+    const res = await this.httpService
+      .post(this.url + '/engine-trigger')
+      .toPromise()
+      .then((res) => res.data)
+      .catch((error) => {
+        if (error.response) {
+          if (error.response.status >= 500) {
+            console.error('Server Error:', error.response.data);
+            throw new Error('Internal server error on cloud function');
+          } else if (error.response.status >= 400) {
+            console.warn('Client Error, Ignored:', error.response.data);
+          }
+        } else {
+          console.error('Error sending request:', error.message);
+          throw error;
+        }
+      });
+    console.log(res);
   }
 }
