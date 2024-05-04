@@ -49,6 +49,7 @@ export class VrVideoRepository extends Repository<VrVideo> {
   async findSamples(): Promise<VrVideo[]> {
     return this.repository.find({
       where: { isSample: true },
+      relations: ['scene', 'avatars'],
     });
   }
 }

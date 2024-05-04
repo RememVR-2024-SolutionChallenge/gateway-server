@@ -58,6 +58,8 @@ export class GetVrVideosResponseDto extends PickType(VrVideo, [
     avatars: VrResourceDtoForVideo[],
   ) {
     super(vrVideo, ['title', 'scene', 'avatars']);
+    this.title = vrVideo.title;
+    this.isSample = vrVideo.isSample;
     this.scene = scene;
     this.avatars = avatars;
   }
