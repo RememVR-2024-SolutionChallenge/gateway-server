@@ -100,9 +100,9 @@ export class VrVideoService {
       throw new NotFoundException('Resource not found');
     }
     if (
-      (scene.group.id !== group.id && scene.isSample == false) ||
+      (scene.isSample == false && scene.group.id !== group.id) ||
       avatars.some(
-        (avatar) => avatar.group.id !== group.id && avatar.isSample == false,
+        (avatar) => avatar.isSample == false && avatar.group.id !== group.id,
       )
     ) {
       throw new UnauthorizedException('Resource not found');
