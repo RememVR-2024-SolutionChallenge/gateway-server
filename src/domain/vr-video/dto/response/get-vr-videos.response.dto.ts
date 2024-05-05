@@ -43,6 +43,7 @@ export class VrResourceDtoForVideo extends PickType(VrResource, [
 }
 
 export class GetVrVideosResponseDto extends PickType(VrVideo, [
+  'id',
   'title',
   'isSample',
 ] as const) {
@@ -58,6 +59,7 @@ export class GetVrVideosResponseDto extends PickType(VrVideo, [
     avatars: VrResourceDtoForVideo[],
   ) {
     super(vrVideo, ['title', 'scene', 'avatars']);
+    this.id = vrVideo.id;
     this.title = vrVideo.title;
     this.isSample = vrVideo.isSample;
     this.scene = scene;
