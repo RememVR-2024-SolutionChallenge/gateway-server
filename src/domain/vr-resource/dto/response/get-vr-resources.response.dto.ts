@@ -30,6 +30,8 @@ export class VrResourceDto extends PickType(VrResource, [
   }
 }
 
+export class GetVrResourceByIdResponseDto extends VrResourceDto {}
+
 export class GetVrResourcesResponseDto {
   @ApiProperty({
     description: 'VR 자원(아바타, 배경) 목록',

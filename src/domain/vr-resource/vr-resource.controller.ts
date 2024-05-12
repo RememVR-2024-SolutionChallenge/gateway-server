@@ -7,6 +7,7 @@ import {
   UploadedFile,
   Get,
   UploadedFiles,
+  Param,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -29,7 +30,10 @@ import { InitEnrollGuard } from 'src/common/auth/guard/init-enroll.guard';
 import { CareGiverGuard } from 'src/common/auth/guard/role.guard';
 import { GetAiTaskQueueResponseDto } from './dto/response/get-ai-task-queue.response.dto';
 import { VrResourceService } from './service/vr-resource.service';
-import { GetVrResourcesResponseDto } from './dto/response/get-vr-resources.response.dto';
+import {
+  GetVrResourceByIdResponseDto,
+  GetVrResourcesResponseDto,
+} from './dto/response/get-vr-resources.response.dto';
 import { GenerateAvatarRequestDto } from './dto/request/generate-avatar.request.dto';
 
 @ApiTags('VR-resource')
@@ -85,6 +89,20 @@ export class VrResourceController {
       files.body[0],
       user,
     );
+  }
+
+  @ApiOperation({
+    summary: 'ID로 특정 VR 자원 불러오기 (샘플 포함)',
+  })
+  @ApiBearerAuth()
+  @ApiResponse({ type: GetVrResourcesResponseDto })
+  @UseGuards(JwtAuthGuard, InitEnrollGuard)
+  @Get('/:id')
+  async getVrResourceById(
+    @Param('id') resourceId: string,
+    @AuthUser() user: User,
+  ): Promise<GetVrResourceByIdResponseDto> {
+    return await this.vrResourceService.getVrResourceById(resourceId, user);
   }
 
   @ApiOperation({

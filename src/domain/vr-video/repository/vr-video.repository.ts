@@ -42,7 +42,7 @@ export class VrVideoRepository extends Repository<VrVideo> {
   async findById(videoId: string): Promise<VrVideo> {
     return this.repository.findOne({
       where: { id: videoId },
-      relations: ['scene', 'avatars'],
+      relations: ['scene', 'avatars', 'group'],
     });
   }
 

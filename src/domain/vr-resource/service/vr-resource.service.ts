@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { GroupService } from 'src/domain/group/service/group.service';
 import { VrResourceRepository } from '../repository/vr-resource.repository';
 import { User } from 'src/domain/user/entity/user.entity';
@@ -34,6 +38,24 @@ export class VrResourceService {
     // 2. make as dto.
     const vrResourceDtos = await this.makeVrResourceDto(sampleVrResources);
     return vrResourceDtos;
+  }
+
+  async getVrResourceById(id: string, user: User): Promise<VrResourceDto> {
+    // 1. Get VR resource by id
+    const vrResource = await this.vrResourceRepository.findById(id);
+    if (!vrResource) {
+      throw new NotFoundException('Not found');
+    }
+    // 2. Check if the user has access to the resource
+    const isOwner =
+      vrResource?.group?.id !== (await this.groupService.getMyGroup(user)).id;
+    if (!(isOwner || vrResource.isSample)) {
+      throw new ForbiddenException('Forbidden');
+    }
+
+    // 3. make as dto
+    const vrResourceDto = await this.makeVrResourceDto([vrResource]);
+    return vrResourceDto[0];
   }
 
   /* -------------------------------------------------------------------------- */

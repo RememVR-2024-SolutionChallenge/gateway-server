@@ -64,6 +64,34 @@ export class VrVideoService {
     return await this.makeVrVideoDto(sampleVrVideos);
   }
 
+  // /* ---------------------------- GET /vr-video/:id --------------------------- */
+  /**
+   * videoID를 통해 특정 video만 가져옴
+   * @param user UserID
+   * @param videoId videoID
+   */
+  async getVrVideo(
+    user: User,
+    videoId: string,
+  ): Promise<GetVrVideosResponseDto> {
+    const vrVideo = await this.vrVideoRepository.findById(videoId);
+    // 1. validation logic
+    if (!vrVideo) {
+      throw new NotFoundException('VrVideo not found');
+    }
+    const isUserInGroup = await this.groupRepository.isUserInGroup(
+      user.id,
+      vrVideo.group.id,
+    );
+    const isSample = vrVideo.isSample;
+    if (!(isUserInGroup || isSample)) {
+      throw new NotFoundException('User is not in the group');
+    }
+
+    // 2. return DTO from DB.
+    return (await this.makeVrVideoDto([vrVideo]))[0];
+  }
+
   /* ----------------------------- POST /vr-video ----------------------------- */
 
   /**
@@ -267,58 +295,3 @@ export class VrVideoService {
     );
   }
 }
-
-// // deprecated
-// // /* ---------------------------- GET /vr-video/:id --------------------------- */
-
-// // /**
-// //  * videoID를 통해 특정 video만 가져옴
-// //  * @param user UserID
-// //  * @param videoId videoID
-// //  */
-// // async getVrVideo(
-// //   user: User,
-// //   videoId: string,
-// // ): Promise<GetVrVideosResponseDto> {
-// //   const vrVideo = await this.vrVideoRepository.findById(videoId);
-// //   // 1. validation logic
-// //   if (!vrVideo) {
-// //     throw new NotFoundException('VrVideo not found');
-// //   }
-// //   const isUserInGroup = await this.groupRepository.isUserInGroup(
-// //     user.id,
-// //     vrVideo.group.id,
-// //   );
-// //   if (!isUserInGroup) {
-// //     throw new NotFoundException('User is not in the group');
-// //   }
-
-// //   // 2. return DTO from DB.
-// //   const sceneDto = VrResourceDtoForVideo.of(
-// //     vrVideo.scene,
-// //     await this.vrResourceStorageRepository.generateSignedUrlList(
-// //       vrVideo.scene.filePath,
-// //     ),
-// //     await this.getResourcePositionFileURL(
-// //       vrVideo.id,
-// //       vrVideo.scene.id,
-// //       'scene',
-// //     ),
-// //   );
-// //   const avatarDtos = await Promise.all(
-// //     vrVideo.avatars.map(async (avatar) => {
-// //       return VrResourceDtoForVideo.of(
-// //         avatar,
-// //         await this.vrResourceStorageRepository.generateSignedUrlList(
-// //           avatar.filePath,
-// //         ),
-// //         await this.getResourcePositionFileURL(
-// //           vrVideo.id,
-// //           avatar.id,
-// //           'avatar',
-// //         ),
-// //       );
-// //     }),
-// //   );
-// //   return new GetVrVideosResponseDto(vrVideo, sceneDto, avatarDtos);
-// // }
